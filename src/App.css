@@ -1,0 +1,162 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+ 
+}
+h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* body { */
+  /* background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); */
+  /* min-height: 100vh; */
+  /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
+/* } */
+
+.login-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  margin: 0 auto;
+  
+  animation: fadeIn 0.6s ease-in-out;
+  
+}
+
+@media (max-width: 576px) {
+  .login-container {
+    
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+  
+   
+  .form-title {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-input-group {
+    margin-bottom: 1.2rem;
+  }
+  
+  .form-input-group label {
+    display: flex;
+    align-items: center;
+    color: #555;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  
+  .form-input-group input {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 0.75rem;
+    transition: border-color 0.3s;
+  }
+  .form-input-group input:focus {
+    border-color: #6c63ff;
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+  }
+  
+  .login-button {
+    background: linear-gradient(to right, #6c63ff, #8e44ad);
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem;
+    color: white;
+    font-weight: 500;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .login-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(108, 99, 255, 0.3);
+  }
+  
+}
+
+.error-message {
+  color: #ff4757;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+.link-text {
+  color: #6c63ff;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.link-text:hover {
+  text-decoration: underline;
+}
+
+/* Images portfolio */
+.portfolio-img {
+  max-width: 300px;
+  height: auto;
+  display: block;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+/* Effet hover sur les images */
+.portfolio-img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+/* Fade-in up effect */
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.6s forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Styles pour le carousel */
+
+
+.carousel-item {
+  height: 100%; /* même valeur que dans ton style inline */
+}
+.carousel-item img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+  transform: none !important;
+  transition: none !important;
+}
+
+.btn-pink {
+  background-color: #ec4899; /* pink-500 Tailwind */
+  color: white;
+  border: none;
+}
+
+.btn-pink:hover {
+  background-color: #db2777; /* pink-600 Tailwind */
+  color: white;
+}
