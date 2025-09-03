@@ -33,10 +33,17 @@ export default function ContactPage() {
                 },
                 body: JSON.stringify(formData),
             });
+            console.log("status",res.status);
+            
+
+
+
             if (!res.ok) {
                 throw new Error('Erreur lors de l\'envoi du message');
             }
             const data = await res.json();
+            console.log("response data",data);
+            
             setFeedback({ type: 'success', message: data.message });
             
             console.log("Données du formulaire envoyées :", formData);

@@ -11,6 +11,8 @@ import { MariagePage } from './pages/MariagePage';
 import { SeancePage } from './pages/SeancePage';
 import { GaleriePublic } from './pages/GaleriePublicPage';
 import { GaleriePrive } from './pages/GaleriePrivePage';
+import PasswordOublie from './pages/PasswordOublie';
+import PasswordReset from './pages/PasswordReset';
 
 function App() {
   return (
@@ -29,6 +31,8 @@ function App() {
         <Route path="/temoignages" element={<div>Témoignages</div>} />
         <Route path="/connexion" element={<LoginPage/>} />
         <Route path="/galeriePrivee" element={<GaleriePrive/>} />
+        <Route path="/passwordOublie" element={<PasswordOublie/>}/>
+        <Route path="/passwordReset/:resetToken" element={<PasswordReset/>}/>
       </Routes>
       
       <Footer />

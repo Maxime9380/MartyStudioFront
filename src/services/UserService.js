@@ -26,3 +26,42 @@ export const createUser = async (userData) => {
 }
 }
 
+export const passwordOublie = async (userdata)=> {
+    try {
+        const response =await API.post('/passwordOublie',userdata);
+        return response.data;
+        
+    } catch (error) {
+        console.error("erreur password oublie",error);
+        throw error;
+        
+    }
+}
+
+export const passwordReset = async(userdata,tokenReset) => {
+    try {
+        console.log('Réinitialisation du mot de passe avec token',tokenReset);
+        const response = await API.post('/passwordReset',userdata,
+            {
+                headers:{
+                    Authorization:tokenReset
+                }
+            }
+        )
+        return response.data;
+        
+    } catch (error) {
+        console.error("erreur pour passwordReset",error)
+        throw error;
+        
+    }
+}
+
+export default {
+    loginUser,
+    createUser,
+    passwordOublie,
+    passwordReset
+}
+
+

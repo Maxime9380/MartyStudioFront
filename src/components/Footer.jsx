@@ -28,7 +28,7 @@ const Footer = () => {
               <li><a href="/apropos" style={{ textDecoration: "none", color: "#3C5A76" }}>À propos</a></li>
               <li><a href="/mariages" style={{ textDecoration: "none", color: "#3C5A76" }}>Mariage</a></li>
               <li><a href="/seances" style={{ textDecoration: "none", color: "#3C5A76" }}>Séances Photo</a></li>
-              <li><a href="/evenements" style={{ textDecoration: "none", color: "#3C5A76" }}>Galeries</a></li>
+              <li><a href="/galeries" style={{ textDecoration: "none", color: "#3C5A76" }}>Galeries</a></li>
               <li><a href="/photobooth" style={{ textDecoration: "none", color: "#3C5A76" }}>Photobooth</a></li>
               <li><a href="/contact" style={{ textDecoration: "none", color: "#3C5A76" }}>Contact</a></li>
                 <li><a href="/temoignages" style={{ textDecoration: "none", color: "#3C5A76" }}>Témoignages</a></li>

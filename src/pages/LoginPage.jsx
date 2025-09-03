@@ -128,7 +128,7 @@ const LoginPage = () => {
                   Créer un compte
                 </span>
                 <span style={{ color: "#aaa" }}>|</span>
-                <a href="/mot-de-passe-oublie" className="link-text ms-2">
+                <a href="/passwordOublie" className="link-text ms-2">
                   Mot de passe oublié ?
                 </a>
               </div>
