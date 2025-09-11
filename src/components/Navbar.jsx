@@ -5,10 +5,15 @@ import { checkToken } from "../services/AuthService";
 
 const NavigationBar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(checkToken());
+  const [user,setUser]=useState(null)
   const navigate = useNavigate();
 
  useEffect(() => {
     setIsLoggedIn(checkToken());
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser){
+      setUser(storedUser);
+    }
     }, [window.location.pathname]);
 
   return (
@@ -77,6 +82,9 @@ const NavigationBar = () => {
             <Nav.Link onClick={()=>{navigate("/temoignages")}} style={{ margin: "0 10px", color: "#3c5a76" }}>
               Témoignages
             </Nav.Link>
+            {isLoggedIn && user?.role ==="admin"&&(
+              <Nav.Link onClick={()=>{navigate("/adminPage")}} style={{ margin: "0 10px", color: "#3c5a76"}}>Réserver ADMIN</Nav.Link>
+            )}
 
             {/* Bouton Connexion/Déconnexion */}
             {isLoggedIn ? (

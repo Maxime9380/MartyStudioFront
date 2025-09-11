@@ -96,7 +96,7 @@ export default function HomePage() {
           <Card.Text>
             Des séances photo personnalisées pour capturer votre personnalité et votre style unique.
           </Card.Text>
-          <Link to="/seance">
+          <Link to="/seances">
           <Button variant="primary">En savoir plus</Button>
             </Link>
         </Card.Body>
@@ -112,7 +112,7 @@ export default function HomePage() {
           <Card.Text>
             Explorez mes galeries pour découvrir une variété de styles et d'approches photographiques.
           </Card.Text>
-          <Link to="/galerie">
+          <Link to="/galeries">
           <Button variant="primary">En savoir plus</Button>
             </Link>
         </Card.Body>

@@ -13,6 +13,8 @@ import { GaleriePublic } from './pages/GaleriePublicPage';
 import { GaleriePrive } from './pages/GaleriePrivePage';
 import PasswordOublie from './pages/PasswordOublie';
 import PasswordReset from './pages/PasswordReset';
+import PhotoboothPage from './pages/PhotoboothPage';
+import AdminPage from './pages/AdminPage';
 
 function App() {
   return (
@@ -26,13 +28,14 @@ function App() {
         <Route path="/mariages" element={<MariagePage/>} />
         <Route path="/seances" element={<SeancePage/>} />
         <Route path="/galeries" element={<GaleriePublic/>} />
-        <Route path="/photobooth" element={<div>Photobooth</div>} />
+        <Route path="/photobooth" element={<PhotoboothPage/>} />
         <Route path="/contact" element={<ContactPage/>} />
         <Route path="/temoignages" element={<div>Témoignages</div>} />
         <Route path="/connexion" element={<LoginPage/>} />
         <Route path="/galeriePrivee" element={<GaleriePrive/>} />
         <Route path="/passwordOublie" element={<PasswordOublie/>}/>
         <Route path="/passwordReset/:resetToken" element={<PasswordReset/>}/>
+        <Route path="/adminpage" element={<AdminPage/>}/>
       </Routes>
       
       <Footer />

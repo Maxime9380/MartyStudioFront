@@ -36,6 +36,8 @@ const LoginPage = () => {
   try {
     const response = await loginUser(userData);
     localStorage.setItem('token', response.token);
+    localStorage.setItem("user",JSON.stringify(response.user));
+    setIsLoggedIn(true);
     navigate('/apropos');
   } catch (error) {
     setError('Échec de la connexion. Veuillez vérifier vos informations.');
@@ -48,6 +50,7 @@ const LoginPage = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem("user");
     setIsLoggedIn(false);
     navigate('/connexion');
     };
