@@ -1,4 +1,4 @@
-import { jwtDecode } from "jwt-decode";
+
 import { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
@@ -8,34 +8,49 @@ const BookingForm = () => {
   const [lieu, setLieu] = useState("");
   const [dateRange, setDateRange] = useState([new Date(), new Date()]);
   const [photobooths, setPhotobooths] = useState([]);
-  const [photoboothId, setPhotoboothId] = useState("");
+  const [photoboothId, setPhotoboothId] = useState(null);
   const [message, setMessage] = useState("");
   const [isLoggedIn,setIsLoggedIn]=useState(false);
   const [userInfo,setUserInfo]=useState(null);
 
+
+ 
+  
+  
   useEffect(() => {
     const fetchData= async()=>{
-    const token = localStorage.getItem("token");
-    if (!token) return;
-    
-    
-        setIsLoggedIn(true);
-        try {
-            const resUser = await fetch("http://localhost:3000/api/me",{
-                headers:{Authorization:token}
-            });
-            if(!resUser.ok) throw new error("impossible de récupérer l'utilisateur");
-            const dataUser =await resUser.json();
-            setUserInfo(dataUser);
-       
-        
-    
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      
+      
+      setIsLoggedIn(true);
 
-    
+
+      try {
+        const resUser = await fetch("http://localhost:3000/api/me",{
+          headers:{Authorization:token}
+        });
+        if(!resUser.ok) throw new Error("impossible de récupérer l'utilisateur");
+        const dataUser =await resUser.json();
+        setUserInfo(dataUser);
+        
+        
+        
+        
+        
         const res = await fetch("http://localhost:3000/api/photobooths");
-        if(!res.ok) throw new error("impossible de récupérer le photobooth");
+        if(!res.ok) throw new Error("impossible de récupérer le photobooth");
         const data = await res.json();
-        setPhotobooths(data);
+
+        const libres = data.filter(pb =>pb.statut ==="libre")
+
+        setPhotobooths(libres);
+        
+        if(libres.length > 0) setPhotoboothId(libres[0].idPhotobooth);
+
+        console.log(libres);
+        
+
       } catch (err) {
         console.error("Erreur lors de la récupération des photobooths", err);
       }
@@ -47,6 +62,11 @@ const BookingForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+     if (!photoboothId) {
+      setMessage("Veuillez sélectionner un photobooth.");
+      return;
+    }
 
     const [dateDebut, dateFin] = dateRange;
     const token = localStorage.getItem("token");
@@ -68,17 +88,22 @@ const BookingForm = () => {
           lieu,
           dateDebut: dateDebut.toISOString().split("T")[0],
           dateFin: dateFin.toISOString().split("T")[0],
-          photoboothId,
+          userId:userInfo.idUser,
+          photoboothId:parseInt(photoboothId),
         }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        setMessage("Location créée avec succès !");
-        setLieu("");
-        setDateRange([new Date(), new Date()]);
-        setPhotoboothId("");
+       setMessage("✅ Location créée avec succès !");
+      setLieu("");
+      setDateRange([new Date(), new Date()]);
+      setPhotobooths((prev) => prev.filter((pb) => pb.idPhotobooth !== photoboothId));
+      setPhotoboothId((prev) => {
+        const remaining = photobooths.filter((pb) => pb.idPhotobooth !== prev);
+        return remaining.length > 0 ? remaining[0].idPhotobooth : "";
+      });
       } else {
         setMessage(data.message || "Erreur lors de la réservation");
       }
@@ -209,14 +234,14 @@ const BookingForm = () => {
           <Calendar selectRange={true} value={dateRange} onChange={setDateRange} />
 
           <select
-            value={photoboothId}
-            onChange={(e) => setPhotoboothId(e.target.value)}
+            value={photoboothId }
+            onChange={(e) => setPhotoboothId(parseInt(e.target.value))}
             required
             style={{ backgroundColor: "white", color: "black", border: "1px solid black", padding: "8px", borderRadius: "6px" }}
           >
             {photobooths.map((pb) => (
               <option key={pb.idPhotobooth} value={pb.idPhotobooth}>
-                Photobooth {pb.idPhotobooth} - {pb.statut === "disponible" ? "Disponible" : "Indisponible"} - {pb.prix}€
+                {pb.nomPhotobooth} 
               </option>
             ))}
           </select>
@@ -224,8 +249,19 @@ const BookingForm = () => {
           <button type="submit" style={{ padding: "10px", borderRadius: "6px", cursor: "pointer" }}>
             Réserver
           </button>
+           {message && (
+    <p
+      style={{
+        color: message.includes("succès") ? "green" : "red",
+        marginTop: "10px",
+        fontWeight: "bold",
+      }}
+    >
+      {message}
+    </p>
+  )}
         </form>
-        {message && <p style={{ color: "black", marginTop: "10px" }}>{message}</p>}
+        
       </div>
     </div>
   );

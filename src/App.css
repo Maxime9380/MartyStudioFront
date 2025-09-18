@@ -160,3 +160,42 @@ h2 {
   background-color: #db2777; /* pink-600 Tailwind */
   color: white;
 }
+
+.commentaires-bulles {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bulle {
+  max-width: 70%;
+  padding: 10px 15px;
+  border-radius: 15px;
+  position: relative;
+  word-wrap: break-word;
+}
+
+.bulle-mien {
+  align-self: flex-end;
+  background-color: #007bff;
+  color: white;
+  border-bottom-right-radius: 0;
+}
+
+.bulle-autre {
+  align-self: flex-start;
+  background-color: #e4e6eb;
+  color: black;
+  border-bottom-left-radius: 0;
+}
+
+.bulle-nom {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.bulle-date {
+  font-size: 0.75rem;
+  color: #555;
+  margin-top: 5px;
+}

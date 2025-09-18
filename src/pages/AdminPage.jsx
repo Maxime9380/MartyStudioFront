@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { PencilFill, TrashFill, Plus } from "react-bootstrap-icons";
+
+// Composants
+import UserTable from "../components/UserTable";
+import GalerieTable from "../components/GalerieTable";
+import PhotoboothTable from "../components/PhotoboothTable";
+import LocationTable from "../components/LocationTable";
 
 const AdminPage = () => {
   const [users, setUsers] = useState([]);
+  const [galeries, setGaleries] = useState([]);
+  const [photobooths, setPhotobooths] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [search, setSearch] = useState("");
-  const [showUserModal, setShowUserModal] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
-
   const token = localStorage.getItem("token");
 
   // --- Fetch Utilisateurs ---
@@ -25,143 +30,163 @@ const AdminPage = () => {
     fetchUsers();
   }, [token]);
 
-  // --- Filtre utilisateurs ---
-  const filteredUsers = users.filter((u) =>
-    u.nom.toLowerCase().includes(search.toLowerCase())
-  );
+  // --- Fetch Galeries ---
+  useEffect(() => {
+    const fetchGaleries = async () => {
+      try {
+        const res = await axios.get("http://localhost:3000/api/galerie", {
+          headers: { Authorization: token },
+        });
+        setGaleries(res.data);
+      } catch (error) {
+        console.error("Erreur chargement galeries", error);
+      }
+    };
+    fetchGaleries();
+  }, [token]);
+
+  // --- Fetch Photobooths ---
+  useEffect(() => {
+    const fetchPhotobooths = async () => {
+      try {
+        const res = await axios.get("http://localhost:3000/api/photobooths", {
+          headers: { Authorization: token },
+        });
+        setPhotobooths(res.data);
+      } catch (error) {
+        console.error("Erreur chargement photobooths", error);
+      }
+    };
+    fetchPhotobooths();
+  }, [token]);
+
+  // --- Fetch Locations ---
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const allLocations = [];
+        for (const user of users) {
+          const res = await axios.get(`http://localhost:3000/api/locations/${user.idUser}`, {
+            headers: { Authorization: token },
+          });
+          allLocations.push(...res.data);
+        }
+        setLocations(allLocations);
+      } catch (error) {
+        console.error("Erreur chargement locations", error);
+      }
+    };
+    if (users.length > 0) fetchLocations();
+  }, [token, users]);
+
+  // --- Handlers Users ---
+  const handleDeleteUser = async (idUser) => {
+    if (!window.confirm("Voulez-vous vraiment supprimer cet utilisateur ?")) return;
+    try {
+      await axios.delete(`http://localhost:3000/api/deleteuser/${idUser}`, {
+        headers: { Authorization: token },
+      });
+      setUsers(users.filter(u => u.idUser !== idUser));
+      alert("Utilisateur supprimé !");
+    } catch (error) {
+      console.error("Erreur suppression utilisateur", error);
+      alert("Impossible de supprimer cet utilisateur.");
+    }
+  };
+
+  // --- Handlers Galeries ---
+  const handleDeleteGalerie = async (idGalerie) => {
+    try {
+      await axios.delete(`http://localhost:3000/api/deletegalerie/${idGalerie}`, {
+        headers: { Authorization: token },
+      });
+      setGaleries(galeries.filter(g => g.idGalerie !== idGalerie));
+      alert("Galerie supprimée !");
+    } catch (error) {
+      console.error("Erreur suppression galerie", error);
+      alert("Impossible de supprimer cette galerie.");
+    }
+  };
+
+  // --- Handlers Photobooths ---
+  const handleDeletePhotobooth = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3000/api/deletephotobooth/${id}`, {
+        headers: { Authorization: token },
+      });
+      setPhotobooths(photobooths.filter(p => p.idPhotobooth !== id));
+      alert("Photobooth supprimé !");
+    } catch (error) {
+      console.error("Erreur suppression photobooth", error);
+      alert("Impossible de supprimer ce photobooth.");
+    }
+  };
+
+  // --- Handlers Locations ---
+  const handleDeleteLocation = async (userId, photoboothId) => {
+    if (!window.confirm("Voulez-vous vraiment supprimer cette location ?")) return;
+
+    try {
+      await axios.delete(`http://localhost:3000/api/deletelocation/${userId}/${photoboothId}`, {
+        headers: { Authorization: token },
+      });
+      setLocations(locations.filter(l => !(l.userId === userId && l.photoboothId === photoboothId)));
+      alert("Location supprimée !");
+    } catch (error) {
+      console.error("Erreur suppression location", error);
+      alert("Impossible de supprimer cette location.");
+    }
+  };
+
+  const handleUpdateLocation = async (loc, newDateDebut, newDateFin) => {
+    try {
+      await axios.put(
+        `http://localhost:3000/api/updatelocation/${loc.userId}/${loc.photoboothId}`,
+        { dateDebut: newDateDebut, dateFin: newDateFin },
+        { headers: { Authorization: token } }
+      );
+      setLocations(locations.map(l =>
+        l.userId === loc.userId && l.photoboothId === loc.photoboothId
+          ? { ...l, dateDebut: newDateDebut, dateFin: newDateFin }
+          : l
+      ));
+      alert("Location mise à jour !");
+    } catch (error) {
+      console.error("Erreur mise à jour location", error);
+      alert("Impossible de mettre à jour cette location.");
+    }
+  };
 
   return (
     <div className="admin-page p-4">
       <h1>Admin Dashboard</h1>
 
-      {/* Section Utilisateurs */}
-      <div>
-        <h2>Gestion des utilisateurs</h2>
-        <div className="mb-3 d-flex">
-          <input
-            type="text"
-            placeholder="Rechercher un utilisateur..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="form-control me-2"
-          />
-          <button
-            className="btn btn-primary"
-            onClick={() => {
-              setCurrentUser(null);
-              setShowUserModal(true);
-            }}
-          >
-            <Plus /> Ajouter
-          </button>
-        </div>
+      <UserTable
+        users={users}
+        locations={locations}
+        search={search}
+        setSearch={setSearch}
+        onDelete={handleDeleteUser}
+      />
 
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th>Nom</th>
-              <th>Email</th>
-              <th>Rôle</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredUsers.map((user) => (
-              <tr key={user.idUser}>
-                <td>{user.nom}</td>
-                <td>{user.email}</td>
-                <td>{user.role}</td>
-                <td>
-                  <button
-                    className="btn btn-sm btn-warning me-2"
-                    onClick={() => {
-                      setCurrentUser(user);
-                      setShowUserModal(true);
-                    }}
-                  >
-                    <PencilFill /> Modifier
-                  </button>
-                  <button
-                    className="btn btn-sm btn-danger"
-                    onClick={() =>
-                      console.log("Supprimer utilisateur", user.idUser)
-                    }
-                  >
-                    <TrashFill /> Supprimer
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <LocationTable
+        locations={locations}
+        users={users}
+        photobooths={photobooths}
+        onUpdate={handleUpdateLocation}
+        onDelete={handleDeleteLocation}
+      />
 
-      {/* Modal Utilisateur */}
-      {showUserModal && (
-        <div className="modal show d-block" tabIndex="-1">
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">
-                  {currentUser ? "Modifier Utilisateur" : "Nouvel Utilisateur"}
-                </h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setShowUserModal(false)}
-                />
-              </div>
-              <div className="modal-body">
-                <input
-                  type="text"
-                  placeholder="Nom"
-                  className="form-control mb-2"
-                  value={currentUser?.nom || ""}
-                  onChange={(e) =>
-                    setCurrentUser({ ...currentUser, nom: e.target.value })
-                  }
-                />
-                <input
-                  type="email"
-                  placeholder="Email"
-                  className="form-control mb-2"
-                  value={currentUser?.email || ""}
-                  onChange={(e) =>
-                    setCurrentUser({ ...currentUser, email: e.target.value })
-                  }
-                />
-                <select
-                  className="form-control mb-2"
-                  value={currentUser?.role || "user"}
-                  onChange={(e) =>
-                    setCurrentUser({ ...currentUser, role: e.target.value })
-                  }
-                >
-                  <option value="user">Utilisateur</option>
-                  <option value="admin">Admin</option>
-                </select>
-              </div>
-              <div className="modal-footer">
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => setShowUserModal(false)}
-                >
-                  Annuler
-                </button>
-                <button
-                  className="btn btn-primary"
-                  onClick={() => {
-                    console.log("Sauvegarder utilisateur", currentUser);
-                    setShowUserModal(false);
-                  }}
-                >
-                  Sauvegarder
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <GalerieTable
+        galeries={galeries}
+        users={users}
+        onDelete={handleDeleteGalerie}
+      />
+
+      <PhotoboothTable
+        photobooths={photobooths}
+        onDelete={handleDeletePhotobooth}
+      />
     </div>
   );
 };

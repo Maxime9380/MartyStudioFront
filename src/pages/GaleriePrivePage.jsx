@@ -7,7 +7,7 @@ export const GaleriePrive =() => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleLogin = async() => {
+    const handleLogin = async(e) => {
         e.preventDefault();
         const email=formData.get('email');
         const password=formData.get('password');
@@ -40,10 +40,10 @@ export const GaleriePrive =() => {
     }
     const fetchPhotos = async (token) => {
         try {
-            const res=await fetch("http://localhost:3000/api/galerieprive", {
+            const res=await fetch("http://localhost:3000/api/galerie", {
                 method: 'GET',
                 headers: {
-                    'Authorization': `token ${token}`,
+                    Authorization: token,
                 },
             });
             if (!res.ok) {
@@ -51,6 +51,8 @@ export const GaleriePrive =() => {
             }
             const data = await res.json();
             setPhoto(data);
+            console.log(data);
+            
         } catch (error) {
             console.error("erreur lors de la récupération des photos :", error);
             alert("une erreur est survenue. Veuillez réessayer.");
@@ -82,9 +84,9 @@ export const GaleriePrive =() => {
             ) : (
                 <div className="row">
                     {photo.map((img) => (
-                        <div className="col-md-4 mb-4" key={img.id}>
+                        <div className="col-md-4 mb-4" key={img.titre}>
                             <div className="card">
-                                <img src={img.url} className="card-img-top" alt={img.description} />
+                                <img src={`http://localhost:3000/uploads/${img.url}`} className="card-img-top" alt={img.description} />
                                 <div className="card-body">
                                     <p className="card-text">{img.description}</p>
                                 </div>

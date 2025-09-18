@@ -53,6 +53,8 @@ export default function ContactPage() {
         } catch (error) {
             console.error("Erreur lors de l'envoi du message :", error);
             alert("Une erreur est survenue. Veuillez réessayer.");
+        }finally {
+          setLoading(false);
         }
     }
 

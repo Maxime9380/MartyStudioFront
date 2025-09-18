@@ -15,6 +15,8 @@ import PasswordOublie from './pages/PasswordOublie';
 import PasswordReset from './pages/PasswordReset';
 import PhotoboothPage from './pages/PhotoboothPage';
 import AdminPage from './pages/AdminPage';
+import CommentairePage from './pages/CommentairePage';
+
 
 function App() {
   return (
@@ -30,7 +32,7 @@ function App() {
         <Route path="/galeries" element={<GaleriePublic/>} />
         <Route path="/photobooth" element={<PhotoboothPage/>} />
         <Route path="/contact" element={<ContactPage/>} />
-        <Route path="/temoignages" element={<div>Témoignages</div>} />
+        <Route path="/temoignages" element={<CommentairePage/>} />
         <Route path="/connexion" element={<LoginPage/>} />
         <Route path="/galeriePrivee" element={<GaleriePrive/>} />
         <Route path="/passwordOublie" element={<PasswordOublie/>}/>
