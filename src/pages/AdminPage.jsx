@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { formatDate, formatDateLocal } from "../utils/dateUtils";
 
 // Composants
 import UserTable from "../components/UserTable";
@@ -69,7 +70,15 @@ const AdminPage = () => {
           const res = await axios.get(`http://localhost:3000/api/locations/${user.idUser}`, {
             headers: { Authorization: token },
           });
-          allLocations.push(...res.data);
+
+          // Formate les dates pour correspondre à MySQL DATE
+          const formatted = res.data.map(loc => ({
+            ...loc,
+            dateDebut: formatDate(loc.dateDebut),
+            dateFin: formatDate(loc.dateFin),
+          }));
+
+          allLocations.push(...formatted);
         }
         setLocations(allLocations);
       } catch (error) {
@@ -77,9 +86,62 @@ const AdminPage = () => {
       }
     };
     if (users.length > 0) fetchLocations();
-  }, [token, users]);
+  }, [users, token]);
 
-  // --- Handlers Users ---
+  // --- Handlers ---
+  const handleDeleteLocation = async (userId, photoboothId, dateDebut) => {
+    try {
+      const d =new Date(dateDebut);
+      d.setDate(d.getDate()+1);
+      const sqlDate = formatDateLocal(d); // Utilise formatDateLocal pour éviter le décalage
+      const res = await axios.delete(
+        `http://localhost:3000/api/deletelocation/${userId}/${photoboothId}/${sqlDate}`,
+        { headers: { Authorization: token } }
+      );
+
+      // Mise à jour du state pour enlever la location sans rafraîchir
+      setLocations(locations.filter(
+        loc => !(loc.userId === userId && loc.photoboothId === photoboothId && loc.dateDebut === sqlDate)
+      ));
+
+      alert(res.data.message);
+    } catch (error) {
+      console.error("Erreur suppression location", error);
+      alert("Impossible de supprimer la location.");
+    }
+  };
+
+  const handleUpdateLocation = async (loc, newDateDebut, newDateFin) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/api/updatelocation/${loc.userId}/${loc.photoboothId}/${formatDate(loc.dateDebut)}`,
+        {
+          dateDebut: formatDateLocal(newDateDebut),
+          dateFin: formatDateLocal(newDateFin),
+          lieu: loc.lieu,
+          statut: loc.statut,
+          prix: loc.prix
+        },
+        { headers: { Authorization: token } }
+      );
+
+      if (response.status === 200) {
+        setLocations(locations.map(l =>
+          l.userId === loc.userId &&
+          l.photoboothId === loc.photoboothId &&
+          formatDate(l.dateDebut) === formatDate(loc.dateDebut)
+            ? { ...l, dateDebut: formatDate(newDateDebut), dateFin: formatDate(newDateFin) }
+            : l
+        ));
+        alert("✅ Location mise à jour !");
+      }
+    } catch (error) {
+      console.error("❌ Erreur mise à jour location", error);
+      alert("Impossible de mettre à jour cette location.");
+    }
+  };
+
+  // Delete handlers pour Users / Galeries / Photobooths
   const handleDeleteUser = async (idUser) => {
     if (!window.confirm("Voulez-vous vraiment supprimer cet utilisateur ?")) return;
     try {
@@ -94,7 +156,6 @@ const AdminPage = () => {
     }
   };
 
-  // --- Handlers Galeries ---
   const handleDeleteGalerie = async (idGalerie) => {
     try {
       await axios.delete(`http://localhost:3000/api/deletegalerie/${idGalerie}`, {
@@ -108,7 +169,6 @@ const AdminPage = () => {
     }
   };
 
-  // --- Handlers Photobooths ---
   const handleDeletePhotobooth = async (id) => {
     try {
       await axios.delete(`http://localhost:3000/api/deletephotobooth/${id}`, {
@@ -119,41 +179,6 @@ const AdminPage = () => {
     } catch (error) {
       console.error("Erreur suppression photobooth", error);
       alert("Impossible de supprimer ce photobooth.");
-    }
-  };
-
-  // --- Handlers Locations ---
-  const handleDeleteLocation = async (userId, photoboothId) => {
-    if (!window.confirm("Voulez-vous vraiment supprimer cette location ?")) return;
-
-    try {
-      await axios.delete(`http://localhost:3000/api/deletelocation/${userId}/${photoboothId}`, {
-        headers: { Authorization: token },
-      });
-      setLocations(locations.filter(l => !(l.userId === userId && l.photoboothId === photoboothId)));
-      alert("Location supprimée !");
-    } catch (error) {
-      console.error("Erreur suppression location", error);
-      alert("Impossible de supprimer cette location.");
-    }
-  };
-
-  const handleUpdateLocation = async (loc, newDateDebut, newDateFin) => {
-    try {
-      await axios.put(
-        `http://localhost:3000/api/updatelocation/${loc.userId}/${loc.photoboothId}`,
-        { dateDebut: newDateDebut, dateFin: newDateFin },
-        { headers: { Authorization: token } }
-      );
-      setLocations(locations.map(l =>
-        l.userId === loc.userId && l.photoboothId === loc.photoboothId
-          ? { ...l, dateDebut: newDateDebut, dateFin: newDateFin }
-          : l
-      ));
-      alert("Location mise à jour !");
-    } catch (error) {
-      console.error("Erreur mise à jour location", error);
-      alert("Impossible de mettre à jour cette location.");
     }
   };
 
