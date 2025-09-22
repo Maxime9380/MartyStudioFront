@@ -63,6 +63,12 @@ const BookingForm = () => {
     }
 
     try {
+      const pb = photobooths.find(pb => pb.idPhotobooth===photoboothId);
+      if (!pb) throw new Error("photobooth introuvable");
+
+      const nbJours = Math.ceil((dateFin - dateDebut) / (1000*60*60*24))+1;
+      const prixTotal = pb.prix * nbJours;
+
       const res = await fetch("http://localhost:3000/api/createlocation", {
         method: "POST",
         headers: {

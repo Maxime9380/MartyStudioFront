@@ -94,6 +94,7 @@ const AdminPage = () => {
       const d =new Date(dateDebut);
       d.setDate(d.getDate()+1);
       const sqlDate = formatDateLocal(d); // Utilise formatDateLocal pour éviter le décalage
+
       const res = await axios.delete(
         `http://localhost:3000/api/deletelocation/${userId}/${photoboothId}/${sqlDate}`,
         { headers: { Authorization: token } }
@@ -111,26 +112,20 @@ const AdminPage = () => {
     }
   };
 
-  const handleUpdateLocation = async (loc, newDateDebut, newDateFin) => {
+  const handleUpdateLocation = async (oldLoc, updatedLoc) => {
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/updatelocation/${loc.userId}/${loc.photoboothId}/${formatDate(loc.dateDebut)}`,
-        {
-          dateDebut: formatDateLocal(newDateDebut),
-          dateFin: formatDateLocal(newDateFin),
-          lieu: loc.lieu,
-          statut: loc.statut,
-          prix: loc.prix
-        },
+        `http://localhost:3000/api/updatelocation/${oldLoc.userId}/${oldLoc.photoboothId}/${formatDate(oldLoc.dateDebut)}`,updatedLoc,
+        
         { headers: { Authorization: token } }
       );
 
       if (response.status === 200) {
         setLocations(locations.map(l =>
-          l.userId === loc.userId &&
-          l.photoboothId === loc.photoboothId &&
-          formatDate(l.dateDebut) === formatDate(loc.dateDebut)
-            ? { ...l, dateDebut: formatDate(newDateDebut), dateFin: formatDate(newDateFin) }
+          l.userId === oldLoc.userId &&
+          l.photoboothId === oldLoc.photoboothId &&
+          formatDate(l.dateDebut) === formatDate(oldLoc.dateDebut)
+            ? updatedLoc
             : l
         ));
         alert("✅ Location mise à jour !");
