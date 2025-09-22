@@ -14,6 +14,13 @@ const AdminPage = () => {
   const [photobooths, setPhotobooths] = useState([]);
   const [locations, setLocations] = useState([]);
   const [search, setSearch] = useState("");
+
+  const [showFormGalerie, setShowFormGalerie] =useState(false);
+  const [titre ,setTitre]=useState("");
+  const [description , setDescription]=useState("");
+  const [statut ,setStatut]=useState("prive");
+  const [files , setFiles]=useState([]);
+
   const token = localStorage.getItem("token");
 
   // --- Fetch Utilisateurs ---
@@ -136,6 +143,54 @@ const AdminPage = () => {
     }
   };
 
+  const handleAddGalerie = () => setShowFormGalerie(true);
+
+  const handleSubmitGalerie = async (e)=> {
+    e.preventDefault();
+    if (!titre || files.length === 0) return alert("titre et photos obligatoire");
+
+    const formData = new FormData();
+    formData.append("titre",titre);
+    formData.append("description",description);
+    formData.append("statut",statut);
+    for (const file of files) formData.append("photos",file);
+
+    try {
+      await axios.post("http://localhost:3000/api/creategalerie",formData,{
+        headers:{Authorization: token ,"content-type":"multipart/form-data"},
+      });
+      alert("Galerie créer !");
+      setShowFormGalerie(false);
+      setTitre("");
+      setDescription("");
+      setStatut("prive");
+      setFiles([]);
+
+      const res = await axios.get("http://localhost:3000/api/galerie",{
+        headers:{Authorization : token},
+      });
+      setGaleries(res.data);
+    }catch (error) {
+      console.error("Erreur création galerie",error);
+      alert("impossible de créer la galerie.");
+    }
+  };
+
+
+
+
+  const handleDeleteGalerie = async (idGalerie) => {
+    try {
+      await axios.delete(`http://localhost:3000/api/deletegalerie/${idGalerie}`, {
+        headers: { Authorization: token },
+      });
+      setGaleries(galeries.filter(g => g.idGalerie !== idGalerie));
+      alert("Galerie supprimée !");
+    } catch (error) {
+      console.error("Erreur suppression galerie", error);
+      alert("Impossible de supprimer cette galerie.");
+    }
+  };
   // Delete handlers pour Users / Galeries / Photobooths
   const handleDeleteUser = async (idUser) => {
     if (!window.confirm("Voulez-vous vraiment supprimer cet utilisateur ?")) return;
@@ -151,18 +206,6 @@ const AdminPage = () => {
     }
   };
 
-  const handleDeleteGalerie = async (idGalerie) => {
-    try {
-      await axios.delete(`http://localhost:3000/api/deletegalerie/${idGalerie}`, {
-        headers: { Authorization: token },
-      });
-      setGaleries(galeries.filter(g => g.idGalerie !== idGalerie));
-      alert("Galerie supprimée !");
-    } catch (error) {
-      console.error("Erreur suppression galerie", error);
-      alert("Impossible de supprimer cette galerie.");
-    }
-  };
 
   const handleDeletePhotobooth = async (id) => {
     try {
@@ -197,10 +240,30 @@ const AdminPage = () => {
         onDelete={handleDeleteLocation}
       />
 
+        {/* Formulaire création galerie */}
+      {showFormGalerie && (
+        <form onSubmit={handleSubmitGalerie} className="mb-4">
+          <input type="text" placeholder="Titre" value={titre} onChange={e => setTitre(e.target.value)} required />
+          <textarea placeholder="Description" value={description} onChange={e => setDescription(e.target.value)} />
+          <select value={statut} onChange={e => setStatut(e.target.value)}>
+            <option value="prive">Privé</option>
+            <option value="public">Public</option>
+          </select>
+          <input type="file" multiple onChange={e => setFiles([...e.target.files])} />
+          <button type="submit" className="btn btn-primary">Créer Galerie</button>
+        </form>
+      )}
+
       <GalerieTable
         galeries={galeries}
-        users={users}
+        token={token}
         onDelete={handleDeleteGalerie}
+        refreshGaleries={async ()=>{
+          const res = await axios.get("http://localhost:3000/api/galerie",{
+            headers:{Authorization : token},
+          });
+          setGaleries(res.data);
+        }}
       />
 
       <PhotoboothTable
