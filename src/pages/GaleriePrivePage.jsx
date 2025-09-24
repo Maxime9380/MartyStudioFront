@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
 
 export const GaleriePrive =() => {
     const [galeries,setGaleries]=useState([]);
@@ -39,36 +40,19 @@ export const GaleriePrive =() => {
         }
       
     }
-    const fetchGaleries = async (token) => {
-        try {
-            const res=await fetch("http://localhost:3000/api/galerie", {
-                method: 'GET',
-                headers: {
-                    Authorization: token,
-                },
-            
-            });
-            if (!res.ok) {
-               console.error("Erreur lors de la récupération des galeries");
-               return;
-            }
-            const data = await res.json();
-            setGaleries(data);
-            console.log(data);
-
-             
-            
-        } catch (error) {
-            console.error("erreur lors de la récupération des photos :", error);
-            
-        }
-    }
-    useEffect(() => {
-        if (galeries && galeries.length ===0 && token) {
-            toast.info("Vous n'avez pas encore de galerie privée.");
-            fetchGaleries(token);
-        }
-    }, [galeries,token]);
+     useEffect(() => {
+    const fetchGaleries = async () => {
+      try {
+        const res = await axios.get("http://localhost:3000/api/galerie", {
+          headers: { Authorization: token },
+        });
+        setGaleries(res.data);
+      } catch (error) {
+        console.error("Erreur chargement galeries", error.res?.data || error.message);
+      }
+    };
+    fetchGaleries();
+  }, [token]);
 
     const handleLogout = () => {
         setToken(null);
@@ -110,9 +94,7 @@ export const GaleriePrive =() => {
             ) : (
               <div>
           <div className="mb-3 text-end">
-            <button className="btn btn-secondary" onClick={handleLogout}>
-              Déconnexion
-            </button>
+           
           </div>
 
           {galeries.length === 0 ? (

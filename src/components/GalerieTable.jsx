@@ -2,11 +2,12 @@ import { TrashFill, Plus } from "react-bootstrap-icons";
 import axios from "axios";
 import {useState} from "react";
 
-const GalerieTable = ({ galeries, token, onDelete,refreshGaleries }) => {
+const GalerieTable = ({ galeries,users = [], token, onDelete,refreshGaleries }) => {
      const [showForm, setShowForm] = useState(false);
   const [titre, setTitre] = useState("");
   const [description, setDescription] = useState("");
   const [statut, setStatut] = useState("prive");
+  const [selectedUserId, setSelectedUserId] = useState("");
   const [files, setFiles] = useState([]);
 
   const handleSubmit = async (e) => {
@@ -17,6 +18,7 @@ const GalerieTable = ({ galeries, token, onDelete,refreshGaleries }) => {
     formData.append("titre", titre);
     formData.append("description", description);
     formData.append("statut", statut);
+    formData.append("userId", selectedUserId);
     for (const file of files) formData.append("photos", file);
 
     try {
@@ -28,6 +30,7 @@ const GalerieTable = ({ galeries, token, onDelete,refreshGaleries }) => {
       setTitre("");
       setDescription("");
       setStatut("prive");
+      setSelectedUserId("");
       setFiles([]);
       refreshGaleries(); // rafraîchir la liste dans le parent
     } catch (error) {
@@ -70,6 +73,21 @@ const GalerieTable = ({ galeries, token, onDelete,refreshGaleries }) => {
             <option value="prive">Privé</option>
             <option value="public">Public</option>
           </select>
+
+           <select
+  value={selectedUserId}
+  onChange={e => setSelectedUserId(e.target.value)}
+  required
+>
+  <option value="">Sélectionner un utilisateur</option>
+  {users.map(user => (
+    <option key={user.idUser} value={user.idUser}>
+      {user.nom} {user.prenom}
+    </option>
+  ))}
+</select> 
+
+
           <input
             type="file"
             multiple
@@ -94,7 +112,8 @@ const GalerieTable = ({ galeries, token, onDelete,refreshGaleries }) => {
             <tr key={galerie.idGalerie}>
               <td>{galerie.titre}</td>
               <td>{galerie.description}</td>
-              <td>{galerie.statut}</td>
+              <td>{galerie.statut=== 1 ? "prive": "public"}</td>
+              
               <td>
                 <button className="btn btn-sm btn-danger" onClick={() => onDelete(galerie.idGalerie)}>
                   <TrashFill /> Supprimer
