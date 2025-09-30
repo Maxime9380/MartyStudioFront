@@ -14,16 +14,14 @@ const LoginPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [openInscription, setOpenInscription] = useState(false);
 
-  const [showPassword, setShowPassword] = useState(false); // 👈 état pour afficher/masquer
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // 👈 pour confirmation aussi
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      setIsLoggedIn(true);
-    }
+    if (token) setIsLoggedIn(true);
   }, []);
 
   const handleSubmit = async (e) => {
@@ -59,6 +57,7 @@ const LoginPage = () => {
   return (
     <div className="container-fluid vh-100 d-flex align-items-center">
       <div className="row w-100 align-items-center">
+
         {/* Colonne gauche : Formulaire */}
         <div className="col-lg-6 col-md-6 d-flex justify-content-center">
           <div
@@ -69,32 +68,29 @@ const LoginPage = () => {
 
             {!isLoggedIn ? (
               <Form onSubmit={handleSubmit}>
+                {/* Email */}
                 <Form.Group className="form-input-group mb-3" controlId="formBasicEmail">
                   <Form.Control
                     type="email"
                     placeholder="Votre adresse email"
                     value={userData.email}
-                    onChange={(event) =>
-                      setUserData({ ...userData, email: event.target.value })
-                    }
+                    onChange={(e) => setUserData({ ...userData, email: e.target.value })}
                     required
                   />
                 </Form.Group>
 
-                {/* Mot de passe avec bouton 👁 */}
+                {/* Mot de passe */}
                 <Form.Group className="form-input-group mb-3" controlId="formBasicPassword">
                   <InputGroup>
                     <Form.Control
                       type={showPassword ? "text" : "password"}
                       placeholder="Votre mot de passe"
                       value={userData.password}
-                      onChange={(event) =>
-                        setUserData({ ...userData, password: event.target.value })
-                      }
+                      onChange={(e) => setUserData({ ...userData, password: e.target.value })}
                       required
                     />
                     <Button
-                      variant="outline-secondary"
+                      style={{ backgroundColor: "#547897", borderColor: "#547897", color: "white" }}
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? "🙈" : "👁"}
@@ -102,20 +98,18 @@ const LoginPage = () => {
                   </InputGroup>
                 </Form.Group>
 
-                {/* Confirmation mot de passe avec bouton 👁 */}
+                {/* Confirmation mot de passe */}
                 <Form.Group className="form-input-group mb-3" controlId="formConfirmPassword">
                   <InputGroup>
                     <Form.Control
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirmez votre mot de passe"
                       value={userData.confirmPassword}
-                      onChange={(event) =>
-                        setUserData({ ...userData, confirmPassword: event.target.value })
-                      }
+                      onChange={(e) => setUserData({ ...userData, confirmPassword: e.target.value })}
                       required
                     />
                     <Button
-                      variant="outline-secondary"
+                      style={{ backgroundColor: "#547897", borderColor: "#547897", color: "white" }}
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     >
                       {showConfirmPassword ? "🙈" : "👁"}
@@ -123,12 +117,14 @@ const LoginPage = () => {
                   </InputGroup>
                 </Form.Group>
 
+                {/* Message d'erreur */}
                 {error && <div className="error-message text-danger mb-2">{error}</div>}
 
+                {/* Bouton Connexion */}
                 <Button
-                  variant="primary"
                   type="submit"
                   className="w-100 login-button mt-2"
+                  style={{ backgroundColor: "#3c5a76", borderColor: "#3c5a76", color: "white" }}
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -140,16 +136,25 @@ const LoginPage = () => {
                   )}
                 </Button>
 
+                {/* Liens secondaires */}
                 <div className="mt-3 text-center">
                   <span
                     onClick={() => setOpenInscription(true)}
                     className="link-text me-2"
-                    style={{ cursor: "pointer", color: "#0d6efd" }}
+                    style={{ cursor: "pointer", color: "#547897", fontWeight: "500" }}
+                    onMouseOver={e => e.currentTarget.style.color = "#3c5a76"}
+                    onMouseOut={e => e.currentTarget.style.color = "#547897"}
                   >
                     Créer un compte
                   </span>
                   <span style={{ color: "#aaa" }}>|</span>
-                  <a href="/passwordOublie" className="link-text ms-2">
+                  <a
+                    href="/passwordOublie"
+                    className="link-text ms-2"
+                    style={{ color: "#547897", fontWeight: "500" }}
+                    onMouseOver={e => e.currentTarget.style.color = "#3c5a76"}
+                    onMouseOut={e => e.currentTarget.style.color = "#547897"}
+                  >
                     Mot de passe oublié ?
                   </a>
                 </div>
@@ -190,3 +195,4 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+

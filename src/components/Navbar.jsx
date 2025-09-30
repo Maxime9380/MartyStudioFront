@@ -98,7 +98,7 @@ const NavigationBar = () => {
                 style={{
                   margin: "0 10px",
                   color: "#fff",
-                  backgroundColor: "#dc3545",
+                  backgroundColor: "#d16d6d",
                   padding: "5px 15px",
                   borderRadius: "5px"
                 }}
@@ -111,7 +111,7 @@ const NavigationBar = () => {
                 style={{
                   margin: "0 10px",
                   color: "#fff",
-                  backgroundColor: "#0d6efd",
+                  backgroundColor: "#3c5a76",
                   padding: "5px 15px",
                   borderRadius: "5px"
                 }}

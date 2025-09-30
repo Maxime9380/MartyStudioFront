@@ -1,14 +1,49 @@
 import { TrashFill, Plus } from "react-bootstrap-icons";
 import axios from "axios";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import { jwtDecode } from "jwt-decode";
 
-const GalerieTable = ({ galeries,users = [], token, onDelete,refreshGaleries }) => {
+
+const GalerieTable = ({ users = [], token, onDelete,refreshGaleries }) => {
      const [showForm, setShowForm] = useState(false);
   const [titre, setTitre] = useState("");
   const [description, setDescription] = useState("");
   const [statut, setStatut] = useState("prive");
   const [selectedUserId, setSelectedUserId] = useState("");
   const [files, setFiles] = useState([]);
+  const [galeries,setGaleries]=useState([]);
+
+
+
+    // --- Fetch Galeries ---
+  useEffect(() => {
+    const fetchGaleries = async () => {
+      try {
+        const decoded = jwtDecode(token); 
+
+       
+        const url =
+          decoded.role === "admin"
+            ? "http://localhost:3000/api/galeries"
+            : "http://localhost:3000/api/galerie";
+
+        const res = await axios.get(url, {
+          headers: { Authorization: token },
+        });
+       
+        
+
+        setGaleries(res.data);
+      } catch (error) {
+        console.error(
+          "Erreur chargement galeries",
+          error.response?.data || error.message
+        );
+      }
+    };
+
+    if (token) fetchGaleries();
+  }, [token]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,10 +67,33 @@ const GalerieTable = ({ galeries,users = [], token, onDelete,refreshGaleries }) 
       setStatut("prive");
       setSelectedUserId("");
       setFiles([]);
-      refreshGaleries(); // rafraîchir la liste dans le parent
+      refreshGaleries();
+      
+      const decoded = jwtDecode(token);
+      const url = decoded.role === "admin"
+      ?"http://localhost:3000/api/galeries"
+      :"http://localhost:3000/api/galerie";
+      const res = await axios.get(url,{headers : { Authorization:token}});
+      setGaleries(res.data);
     } catch (error) {
       console.error("Erreur création galerie", error);
       alert("Impossible de créer la galerie.");
+    }
+  };
+
+  const handleDelete = async (idGalerie) => {
+    try {
+      await onDelete(idGalerie);
+      // 🔄 Recharge après suppression
+      const decoded = jwtDecode(token);
+      const url =
+        decoded.role === "admin"
+          ? "http://localhost:3000/api/galeries"
+          : "http://localhost:3000/api/galerie";
+      const res = await axios.get(url, { headers: { Authorization: token } });
+      setGaleries(res.data);
+    } catch (error) {
+      console.error("Erreur suppression galerie :", error);
     }
   };
 
@@ -104,6 +162,7 @@ const GalerieTable = ({ galeries,users = [], token, onDelete,refreshGaleries }) 
             <th>Titre</th>
             <th>Description</th>
             <th>Statut</th>
+            <th>Utilisateur</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -113,6 +172,7 @@ const GalerieTable = ({ galeries,users = [], token, onDelete,refreshGaleries }) 
               <td>{galerie.titre}</td>
               <td>{galerie.description}</td>
               <td>{galerie.statut=== 1 ? "prive": "public"}</td>
+              <td>{galerie.nom ? `${galerie.nom} ${galerie.prenom}`:"moi"}</td>
               
               <td>
                 <button className="btn btn-sm btn-danger" onClick={() => onDelete(galerie.idGalerie)}>

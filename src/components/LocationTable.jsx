@@ -2,14 +2,11 @@ import { PencilFill, TrashFill } from "react-bootstrap-icons";
 import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import moment from "moment";
 
 // Utilitaire pour formater une date en YYYY-MM-DD
 const formatDate = (date) => {
-  const d = new Date(date);
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+  return moment(date).format("YYYY-MM-DD");
 };
 
 const LocationTable = ({ locations, users, photobooths, onUpdate, onDelete }) => {
@@ -42,7 +39,6 @@ const LocationTable = ({ locations, users, photobooths, onUpdate, onDelete }) =>
             const pb = photobooths.find((p) => p.idPhotobooth === loc.photoboothId);
             const locKey = `${loc.userId}-${loc.photoboothId}-${loc.dateDebut}`;
             const isEditing = editingLoc === locKey;
-
             return (
               <tr key={locKey}>
                 <td>
@@ -126,26 +122,26 @@ const LocationTable = ({ locations, users, photobooths, onUpdate, onDelete }) =>
                 <td>
                   {isEditing ? (
                     <DatePicker
-                      selected={formData.dateDebut ? new Date(formData.dateDebut) : new Date(loc.dateDebut)}
+                    selected={formData.dateDebut ? moment(formData.dateDebut).format('YYYY-MM-DD') : moment(formData.dateDebut).format('YYYY-MM-DD') }
                       onChange={(date) => handleChange("dateDebut", formatDate(date))}
                       dateFormat="yyyy-MM-dd"
                       className="form-control"
                     />
                   ) : (
-                    loc.dateDebut
+                    moment(loc.dateDebut).add(1, 'day').format('DD/MM/YYYY')
                   )}
                 </td>
 
                 <td>
                   {isEditing ? (
                     <DatePicker
-                      selected={formData.dateFin ? new Date(formData.dateFin) : new Date(loc.dateFin)}
+                      selected={formData.dateFin ? moment(formData.dateFin).format('YYYY-MM-DD'): moment(formData.dateFin).add(1, 'day').format('YYYY-MM-DD') }
                       onChange={(date) => handleChange("dateFin", formatDate(date))}
                       dateFormat="yyyy-MM-dd"
                       className="form-control"
                     />
                   ) : (
-                    loc.dateFin
+                    moment(loc.dateFin).add(1, 'day').format('DD/MM/YYYY')
                   )}
                 </td>
 
@@ -158,6 +154,8 @@ const LocationTable = ({ locations, users, photobooths, onUpdate, onDelete }) =>
                           onUpdate(loc, {
                             ...loc,
                             ...formData, // envoie toutes les nouvelles valeurs
+                           dateDebut: moment(loc.dateDebut).add(1,'day').format("YYYY-MM-DD"),
+                            dateFin: moment(loc.dateFin).add(1,'day').format("YYYY-MM-DD"),
                           });
                           setEditingLoc(null);
                           setFormData({});
@@ -168,6 +166,16 @@ const LocationTable = ({ locations, users, photobooths, onUpdate, onDelete }) =>
                       <button
                         className="btn btn-sm btn-secondary"
                         onClick={() => {
+                             onUpdate(loc, {
+    ...loc,
+    ...formData,
+    dateDebut: formData.dateDebut
+      ? formData.dateDebut
+      : moment(loc.dateDebut).add(1, 'day').format("YYYY-MM-DD"),
+    dateFin: formData.dateFin
+      ? formData.dateFin
+      : moment(loc.dateFin).add(1, 'day').format("YYYY-MM-DD"),
+  });
                           setEditingLoc(null);
                           setFormData({});
                         }}
@@ -181,17 +189,25 @@ const LocationTable = ({ locations, users, photobooths, onUpdate, onDelete }) =>
                         className="btn btn-sm btn-warning me-2"
                         onClick={() => {
                           setEditingLoc(locKey);
-                          setFormData(loc); // pré-remplir avec les valeurs actuelles
+                          setFormData({...loc,
+                            dateDebut: moment(loc.dateDebut).add(1,'day').format("YYYY-MM-DD"),
+                            dateFin: moment(loc.dateFin).add(1,'day').format("YYYY-MM-DD"),
+                          }); // pré-remplir avec les valeurs actuelles
                         }}
                       >
                         <PencilFill /> Modifier
                       </button>
-                      <button
-                        className="btn btn-sm btn-danger"
-                        onClick={() => onDelete(loc.userId, loc.photoboothId, loc.dateDebut)}
-                      >
-                        <TrashFill /> Supprimer
-                      </button>
+                     
+  <button
+    className="btn btn-sm btn-danger"
+    onClick={() => {
+        const dateDebutPlusUn= moment(loc.dateDebut).add(1,'day').format("YYYY-MM-DD");
+        onDelete(loc.userId,loc.photoboothId,dateDebutPlusUn)
+    }}
+  >
+    <TrashFill /> Supprimer
+  </button>
+
                     </>
                   )}
                 </td>

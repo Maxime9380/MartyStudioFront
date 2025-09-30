@@ -8,6 +8,9 @@ import UserTable from "../components/UserTable";
 import GalerieTable from "../components/GalerieTable";
 import PhotoboothTable from "../components/PhotoboothTable";
 import LocationTable from "../components/LocationTable";
+import { Button, Form, Modal } from "react-bootstrap";
+import { toast } from "react-toastify";
+import moment from "moment";
 
 const AdminPage = () => {
   const [users, setUsers] = useState([]);
@@ -15,6 +18,15 @@ const AdminPage = () => {
   const [photobooths, setPhotobooths] = useState([]);
   const [locations, setLocations] = useState([]);
   const [search, setSearch] = useState("");
+  const [showModal,setShowModal]= useState(false);
+  const [mode,setMode]= useState("add");
+  const [currentPhotobooth, setCurrentPhotobooth]=useState({
+    idPhotobooth:null,
+    nomPhotobooth:"",
+    statut:"libre",
+    prix:"",
+  });
+
 
   const token = localStorage.getItem("token");
 
@@ -34,30 +46,30 @@ const AdminPage = () => {
   }, [token]);
 
   // --- Fetch Galeries ---
-  useEffect(() => {
-  const fetchGaleries = async () => {
-    try {
-      const decoded = jwtDecode(token); // { idUser, role, ... }
-      const url =
-        decoded.role === "admin"
-          ? "http://localhost:3000/api/galerie"
-          : "http://localhost:3000/api/galeries";
+//   useEffect(() => {
+//   const fetchGaleries = async () => {
+//     try {
+//       const decoded = jwtDecode(token); // { idUser, role, ... }
+//       const url =
+//         decoded.role === "admin"
+//           ? "http://localhost:3000/api/galerie"
+//           : "http://localhost:3000/api/galeries";
 
-      const res = await axios.get(url, {
-        headers: { Authorization: token },
-      });
+//       const res = await axios.get(url, {
+//         headers: { Authorization: token },
+//       });
 
-      setGaleries(res.data);
-    } catch (error) {
-      console.error(
-        "Erreur chargement galeries",
-        error.response?.data || error.message
-      );
-    }
-  };
+//       setGaleries(res.data);
+//     } catch (error) {
+//       console.error(
+//         "Erreur chargement galeries",
+//         error.response?.data || error.message
+//       );
+//     }
+//   };
 
-  if (token) fetchGaleries();
-}, [token]);
+//   if (token) fetchGaleries();
+// }, [token]);
 
   // --- Fetch Photobooths ---
   useEffect(() => {
@@ -66,6 +78,8 @@ const AdminPage = () => {
         const res = await axios.get("http://localhost:3000/api/photobooths", {
           headers: { Authorization: token },
         });
+        console.log(res.data);
+        
         setPhotobooths(res.data);
       } catch (error) {
         console.error("Erreur chargement photobooths", error);
@@ -73,6 +87,8 @@ const AdminPage = () => {
     };
     fetchPhotobooths();
   }, [token]);
+
+
 
   // --- Fetch Locations ---
   useEffect(() => {
@@ -143,6 +159,109 @@ const AdminPage = () => {
     }
   };
 
+  const handleAddPhotobooth =()=>{
+   setMode("add");
+   setCurrentPhotobooth({
+    idPhotobooth:null,
+    nomPhotobooth:"",
+    statut:"libre",
+    prix:"",
+   }) 
+   setShowModal (true);
+  } ;
+
+  const handleEditPhotobooth =(pb) => {
+    setMode("edit");
+    setCurrentPhotobooth(pb);
+    setShowModal(true);
+  }
+
+  const handleSubmitPhotobooth = async (e) => {
+    e.preventDefault();
+    try {
+  if (mode==="add") {
+      const res =await axios.post("http://localhost:3000/api/createphotobooth",currentPhotobooth,{
+        headers:{Authorization:token},
+
+      });
+      setPhotobooths([...photobooths,res.data]);
+      toast.success("photobooth crée");
+    }else if (mode==="edit"){
+      await axios.put(`http://localhost:3000/api/updatephotobooth/${currentPhotobooth.idPhotobooth}`,currentPhotobooth,{
+        headers:{Authorization:token},
+      }
+      );
+    setPhotobooths(photobooths.map((p)=>(p.idPhotobooth === currentPhotobooth.idPhotobooth ? currentPhotobooth : p)));
+    toast.success("photobooth modifié");
+  }
+  setShowModal(false);
+    }catch (error){
+      console.error("Erreur création photobooth",error);
+      toast.error("Impossible de créer le photobooth");
+    }
+  };
+
+  const handleDeleteLocation = async (userId, photoboothId, dateDebut) => {
+  if (!window.confirm("Voulez-vous vraiment supprimer cette location ?")) return;
+
+  try {
+    await axios.delete(
+      `http://localhost:3000/api/deletelocation/${userId}/${photoboothId}/${dateDebut}`,
+      { headers: { Authorization: token } }
+    );
+
+    // Supprimer du state local
+    setLocations(locations.filter(
+      loc =>
+        !(loc.userId === userId && loc.photoboothId === photoboothId && loc.dateDebut === dateDebut)
+    ));
+    toast.success("Location supprimée !");
+  } catch (error) {
+    console.error("Erreur suppression location", error);
+    toast.error("Impossible de supprimer cette location.");
+  }
+};
+const handleUpdateLocation = async (oldLoc, updatedLoc) => {
+  try {
+
+     const oldDateDebut = moment(oldLoc.dateDebut, ["DD/MM/YYYY", "YYYY-MM-DD"]).format("YYYY-MM-DD");
+
+    // Corps à envoyer au backend
+    const body = {
+      ...updatedLoc,
+      newDateDebut: updatedLoc.dateDebut
+        ? moment(updatedLoc.dateDebut).format("YYYY-MM-DD")
+        : oldDateDebut, // fallback
+      dateFin: updatedLoc.dateFin
+        ? moment(updatedLoc.dateFin).format("YYYY-MM-DD")
+        : moment(oldLoc.dateFin, ["DD/MM/YYYY", "YYYY-MM-DD"]).format("YYYY-MM-DD"),
+    };
+
+
+
+
+    await axios.put(
+      `http://localhost:3000/api/updatelocation/${oldLoc.userId}/${oldLoc.photoboothId}/${oldDateDebut}`,
+      body,
+      { headers: { Authorization: token } }
+    );
+
+    // Mettre à jour le state local
+    setLocations(locations.map(loc =>
+      loc.userId === oldLoc.userId &&
+      loc.photoboothId === oldLoc.photoboothId && moment
+      (loc.dateDebut, ["DD/MM/YYYY", "YYYY-MM-DD"]).format("YYYY-MM-DD")=== oldDateDebut
+        ? { ...loc, ...updatedLoc }
+        : loc
+    ));
+
+    toast.success("Location mise à jour !");
+  } catch (error) {
+    console.error("Erreur modification location", error);
+    toast.error("Impossible de modifier cette location.");
+  }
+};
+
   return (
     <div className="admin-page p-4">
       <h1>Admin Dashboard</h1>
@@ -171,13 +290,81 @@ const AdminPage = () => {
       />
 
       {/* Table des photobooths */}
-      <PhotoboothTable photobooths={photobooths} onDelete={handleDeletePhotobooth} />
+      <PhotoboothTable photobooths={photobooths}
+       onDelete={handleDeletePhotobooth}
+       onAdd={handleAddPhotobooth}
+       onEdit={handleEditPhotobooth} />
+
+        <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            {mode === "add" ? "Ajouter un photobooth" : "Modifier le photobooth"}
+          </Modal.Title>
+        </Modal.Header>
+        <Form onSubmit={handleSubmitPhotobooth}>
+          <Modal.Body>
+            <Form.Group className="mb-3">
+              <Form.Label>Nom</Form.Label>
+              <Form.Control
+                type="text"
+                value={currentPhotobooth.nomPhotobooth}
+                onChange={(e) =>
+                  setCurrentPhotobooth({
+                    ...currentPhotobooth,
+                    nomPhotobooth: e.target.value,
+                  })
+                }
+                required
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Statut</Form.Label>
+              <Form.Select
+                value={currentPhotobooth.statut}
+                onChange={(e) =>
+                  setCurrentPhotobooth({
+                    ...currentPhotobooth,
+                    statut: e.target.value,
+                  })
+                }
+              >
+                <option>Disponible</option>
+                <option>Indisponible</option>
+              </Form.Select>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Prix</Form.Label>
+              <Form.Control
+                type="number"
+                value={currentPhotobooth.prix}
+                onChange={(e) =>
+                  setCurrentPhotobooth({
+                    ...currentPhotobooth,
+                    prix: e.target.value,
+                  })
+                }
+                required
+              />
+            </Form.Group>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowModal(false)}>
+              Annuler
+            </Button>
+            <Button variant="primary" type="submit">
+              {mode === "add" ? "Enregistrer" : "Mettre à jour"}
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal>
 
       {/* Table des locations */}
       <LocationTable
         locations={locations}
         users={users}
         photobooths={photobooths}
+        onUpdate={handleUpdateLocation}
+       onDelete={handleDeleteLocation}
       />
     </div>
   );

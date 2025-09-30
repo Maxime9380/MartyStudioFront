@@ -1,9 +1,10 @@
 
-import { useState, useEffect } from "react";
-import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
+import React, { useState, useEffect } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import moment from "moment";
 
 const BookingForm = () => {
   const [lieu, setLieu] = useState("");
@@ -33,7 +34,6 @@ const BookingForm = () => {
         const data = await res.json();
 
         const libres = data.filter((pb) => pb.statut === "libre");
-
         setPhotobooths(libres);
 
         if (libres.length > 0) setPhotoboothId(libres[0].idPhotobooth);
@@ -53,6 +53,10 @@ const BookingForm = () => {
       toast.warn("Veuillez sélectionner un photobooth.");
       return;
     }
+    if (!dateRange || !dateRange[0]) {
+      toast.warn("Veuillez sélectionner une date valide.");
+      return;
+    }
 
     const [dateDebut, dateFin] = dateRange;
     const token = localStorage.getItem("token");
@@ -63,10 +67,12 @@ const BookingForm = () => {
     }
 
     try {
-      const pb = photobooths.find(pb => pb.idPhotobooth===photoboothId);
-      if (!pb) throw new Error("photobooth introuvable");
+      const pb = photobooths.find(pb => pb.idPhotobooth === photoboothId);
+      if (!pb) throw new Error("Photobooth introuvable");
 
-      const nbJours = Math.ceil((dateFin - dateDebut) / (1000*60*60*24))+1;
+      const dateDebutMoment = moment(dateDebut);
+      const dateFinMoment = moment(dateFin);
+      const nbJours = dateFinMoment.diff(dateDebutMoment, 'days') + 1;
       const prixTotal = pb.prix * nbJours;
 
       const res = await fetch("http://localhost:3000/api/createlocation", {
@@ -77,8 +83,8 @@ const BookingForm = () => {
         },
         body: JSON.stringify({
           lieu,
-          dateDebut: dateDebut.toISOString().split("T")[0],
-          dateFin: dateFin.toISOString().split("T")[0],
+          dateDebut: moment(dateDebut).format("YYYY-MM-DD"),
+          dateFin: moment(dateFin).format("YYYY-MM-DD"),
           userId: userInfo.idUser,
           photoboothId: parseInt(photoboothId),
         }),
@@ -90,9 +96,9 @@ const BookingForm = () => {
         toast.success("✅ Location créée avec succès !");
         setLieu("");
         setDateRange([new Date(), new Date()]);
-        setPhotobooths((prev) => prev.filter((pb) => pb.idPhotobooth !== photoboothId));
-        setPhotoboothId((prev) => {
-          const remaining = photobooths.filter((pb) => pb.idPhotobooth !== prev);
+        setPhotobooths(prev => prev.filter(pb => pb.idPhotobooth !== photoboothId));
+        setPhotoboothId(prev => {
+          const remaining = photobooths.filter(pb => pb.idPhotobooth !== prev);
           return remaining.length > 0 ? remaining[0].idPhotobooth : "";
         });
       } else {
@@ -181,7 +187,7 @@ const BookingForm = () => {
         style={{
           position: "relative",
           zIndex: 1,
-          backgroundColor: "rgba(255,255,255,0.9)",
+          backgroundColor: "rgba(255,255,255,0.95)",
           padding: "20px",
           borderRadius: "10px",
           minWidth: "300px",
@@ -196,42 +202,9 @@ const BookingForm = () => {
         >
           {userInfo && (
             <>
-              <input
-                type="text"
-                value={userInfo.nom || ""}
-                readOnly
-                style={{
-                  backgroundColor: "white",
-                  color: "black",
-                  border: "1px solid black",
-                  padding: "8px",
-                  borderRadius: "6px",
-                }}
-              />
-              <input
-                type="text"
-                value={userInfo.prenom || ""}
-                readOnly
-                style={{
-                  backgroundColor: "white",
-                  color: "black",
-                  border: "1px solid black",
-                  padding: "8px",
-                  borderRadius: "6px",
-                }}
-              />
-              <input
-                type="email"
-                value={userInfo.email || ""}
-                readOnly
-                style={{
-                  backgroundColor: "white",
-                  color: "black",
-                  border: "1px solid black",
-                  padding: "8px",
-                  borderRadius: "6px",
-                }}
-              />
+              <input type="text" value={userInfo.nom || ""} readOnly style={inputStyle} />
+              <input type="text" value={userInfo.prenom || ""} readOnly style={inputStyle} />
+              <input type="email" value={userInfo.email || ""} readOnly style={inputStyle} />
             </>
           )}
 
@@ -241,29 +214,26 @@ const BookingForm = () => {
             value={lieu}
             onChange={(e) => setLieu(e.target.value)}
             required
-            style={{
-              backgroundColor: "white",
-              color: "black",
-              border: "1px solid black",
-              padding: "8px",
-              borderRadius: "6px",
-            }}
+            style={inputStyle}
           />
 
           <label style={{ color: "black" }}>Choisir les dates :</label>
-          <Calendar selectRange={true} value={dateRange} onChange={setDateRange} />
+         <div style={{ display: "flex", justifyContent: "center", marginBottom: "10px" }}>
+  <DatePicker
+    selected={dateRange[0]}
+    onChange={(dates) => setDateRange(dates)}
+    startDate={dateRange[0]}
+    endDate={dateRange[1]}
+    selectsRange
+    inline
+  />
+</div>
 
           <select
             value={photoboothId}
             onChange={(e) => setPhotoboothId(parseInt(e.target.value))}
             required
-            style={{
-              backgroundColor: "white",
-              color: "black",
-              border: "1px solid black",
-              padding: "8px",
-              borderRadius: "6px",
-            }}
+            style={inputStyle}
           >
             {photobooths.map((pb) => (
               <option key={pb.idPhotobooth} value={pb.idPhotobooth}>
@@ -272,10 +242,7 @@ const BookingForm = () => {
             ))}
           </select>
 
-          <button
-            type="submit"
-            style={{ padding: "10px", borderRadius: "6px", cursor: "pointer" }}
-          >
+          <button type="submit" style={buttonStyle}>
             Réserver
           </button>
         </form>
@@ -283,6 +250,20 @@ const BookingForm = () => {
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
+};
+
+const inputStyle = {
+  backgroundColor: "white",
+  color: "black",
+  border: "1px solid black",
+  padding: "8px",
+  borderRadius: "6px",
+};
+
+const buttonStyle = {
+  padding: "10px",
+  borderRadius: "6px",
+  cursor: "pointer",
 };
 
 export default BookingForm;
