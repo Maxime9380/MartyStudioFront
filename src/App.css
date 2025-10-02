@@ -199,3 +199,147 @@ h2 {
   color: #555;
   margin-top: 5px;
 }
+
+/* Conteneur global de réservation */
+.booking-container {
+  position: relative;
+  min-height: 100vh;
+  background-image: url('/caravane.jpeg'); /* chemin de ton image */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Overlay semi-transparent */
+.booking-container .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(60, 90, 118, 0.2);
+  z-index: 1;
+}
+
+/* Carte du formulaire */
+.booking-card {
+  position: relative;
+  z-index: 2;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 500px;
+  transition: all 0.3s ease;
+}
+
+/* Titre */
+.booking-card .title {
+  color: #000; /* Titre en noir */
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+/* Formulaire */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Inputs et selects */
+.input {
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 1px solid #3c5a76;
+  font-size: 1rem;
+  outline: none;
+  background-color: #3c5a76; /* fond bleu */
+  color: #fff; /* texte blanc */
+  transition: border 0.2s, background-color 0.2s;
+}
+
+.input:focus {
+  border: 2px solid #2b4260;
+  background-color: #3c5a76;
+  color: #fff;
+}
+
+/* Label */
+.label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #3c5a76;
+}
+
+/* Datepicker */
+.datepicker-container {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+  padding: 10px 0;
+}
+
+/* Bouton */
+.button {
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background-color: #3c5a76;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.button:hover {
+  background-color: #2b4260;
+  transform: translateY(-2px);
+}
+
+/* Message d'alerte ou connexion requise */
+.booking-card p {
+  color: #e74c3c;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .booking-card {
+    width: 95%;
+    padding: 20px;
+  }
+
+  .datepicker-container {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-card {
+    width: 100%;
+    padding: 15px;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .input {
+    padding: 8px 12px;
+    font-size: 0.95rem;
+  }
+
+  .button {
+    padding: 10px;
+    font-size: 0.95rem;
+  }
+}

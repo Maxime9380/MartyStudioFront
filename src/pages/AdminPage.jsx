@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { formatDate, formatDateLocal } from "../utils/dateUtils";
-import {jwtDecode} from "jwt-decode";
+
 
 // Composants
 import UserTable from "../components/UserTable";
@@ -45,31 +45,7 @@ const AdminPage = () => {
     fetchUsers();
   }, [token]);
 
-  // --- Fetch Galeries ---
-//   useEffect(() => {
-//   const fetchGaleries = async () => {
-//     try {
-//       const decoded = jwtDecode(token); // { idUser, role, ... }
-//       const url =
-//         decoded.role === "admin"
-//           ? "http://localhost:3000/api/galerie"
-//           : "http://localhost:3000/api/galeries";
 
-//       const res = await axios.get(url, {
-//         headers: { Authorization: token },
-//       });
-
-//       setGaleries(res.data);
-//     } catch (error) {
-//       console.error(
-//         "Erreur chargement galeries",
-//         error.response?.data || error.message
-//       );
-//     }
-//   };
-
-//   if (token) fetchGaleries();
-// }, [token]);
 
   // --- Fetch Photobooths ---
   useEffect(() => {
@@ -145,6 +121,7 @@ const AdminPage = () => {
       alert("Impossible de supprimer cet utilisateur.");
     }
   };
+  
 
   const handleDeletePhotobooth = async (id) => {
     try {
@@ -165,7 +142,7 @@ const AdminPage = () => {
     idPhotobooth:null,
     nomPhotobooth:"",
     statut:"libre",
-    prix:"",
+    prix:1,
    }) 
    setShowModal (true);
   } ;
@@ -179,6 +156,13 @@ const AdminPage = () => {
   const handleSubmitPhotobooth = async (e) => {
     e.preventDefault();
     try {
+
+      const photoboothData = {
+        ...currentPhotobooth,
+        prix:1,
+      }
+
+
   if (mode==="add") {
       const res =await axios.post("http://localhost:3000/api/createphotobooth",currentPhotobooth,{
         headers:{Authorization:token},
@@ -273,6 +257,7 @@ const handleUpdateLocation = async (oldLoc, updatedLoc) => {
         search={search}
         setSearch={setSearch}
         onDelete={handleDeleteUser}
+        
       />
 
       {/* Table des galeries (formulaire inclus) */}
@@ -335,15 +320,10 @@ const handleUpdateLocation = async (oldLoc, updatedLoc) => {
             <Form.Group className="mb-3">
               <Form.Label>Prix</Form.Label>
               <Form.Control
-                type="number"
-                value={currentPhotobooth.prix}
-                onChange={(e) =>
-                  setCurrentPhotobooth({
-                    ...currentPhotobooth,
-                    prix: e.target.value,
-                  })
-                }
-                required
+                type="text"
+                value="1 € / tirage"
+               
+               readOnly
               />
             </Form.Group>
           </Modal.Body>

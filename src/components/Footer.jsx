@@ -1,3 +1,4 @@
+// src/components/Footer.jsx
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 
@@ -5,23 +6,22 @@ const Footer = () => {
   return (
     <footer
       style={{
-        backgroundColor: "#c8bcb3", // couleur similaire à ton image
+        backgroundColor: "#c8bcb3",
         padding: "40px 20px 20px 20px",
-      
       }}
     >
       <Container>
-        <Row style={{display:"flex",justifyContent:"space-around", alignItems:"center"}}>
+        <Row style={{ display: "flex", justifyContent: "space-around", alignItems: "flex-start", flexWrap: "wrap" }}>
           {/* Colonne gauche */}
-          <Col md={4} sm={12} style={{ marginBottom: "20px", color:" #3C5A76" }}>
+          <Col md={4} sm={12} style={{ marginBottom: "20px", color: "#3C5A76" }}>
             <h5 style={{ fontWeight: "bold" }}>Chez Marty Studio</h5>
             <p>Photographe</p>
-            <p>Contact Chez Marty Studio</p>
-            <p>Email: chezmartystudio@gmail.com</p>
-            <p>Téléphone: 06 11 22 33 44</p>
+            <p>Contact :</p>
+            <p>Email: <a href="mailto:chezmartystudio@gmail.com" style={{ color: "#3C5A76" }}>chezmartystudio@gmail.com</a></p>
+            <p>Téléphone: <a href="tel:+33611223344" style={{ color: "#3C5A76" }}>06 11 22 33 44</a></p>
           </Col>
 
-          {/* Colonne milieu */}
+          {/* Colonne plan du site */}
           <Col md={4} sm={12} style={{ marginBottom: "20px" }}>
             <h5 style={{ fontWeight: "bold" }}>Plan du site</h5>
             <ul style={{ listStyle: "none", padding: 0 }}>
@@ -31,17 +31,18 @@ const Footer = () => {
               <li><a href="/galeries" style={{ textDecoration: "none", color: "#3C5A76" }}>Galeries</a></li>
               <li><a href="/photobooth" style={{ textDecoration: "none", color: "#3C5A76" }}>Photobooth</a></li>
               <li><a href="/contact" style={{ textDecoration: "none", color: "#3C5A76" }}>Contact</a></li>
-                <li><a href="/temoignages" style={{ textDecoration: "none", color: "#3C5A76" }}>Témoignages</a></li>
-                <li><a href="/connexion" style={{ textDecoration: "none", color: "#3C5A76" }}>Connexion</a></li>
+              <li><a href="/temoignages" style={{ textDecoration: "none", color: "#3C5A76" }}>Témoignages</a></li>
+              <li><a href="/connexion" style={{ textDecoration: "none", color: "#3C5A76" }}>Connexion</a></li>
             </ul>
           </Col>
 
-          {/* Colonne droite */}
+          {/* Colonne légales */}
           <Col md={4} sm={12} style={{ marginBottom: "20px" }}>
-            <h5 style={{ fontWeight: "bold" }}>Affichages obligatoires</h5>
+            <h5 style={{ fontWeight: "bold" }}>Mentions légales & RGPD</h5>
             <ul style={{ listStyle: "none", padding: 0 }}>
-              <li><a href="#mentions" style={{ textDecoration: "none", color: "#3C5A76" }}>Mentions légales</a></li>
-              <li><a href="#confidentialite" style={{ textDecoration: "none", color: "#3C5A76" }}>Politique de confidentialité</a></li>
+              <li><a href="/mentions-legales" style={{ textDecoration: "none", color: "#3C5A76" }}>Mentions légales</a></li>
+              <li><a href="/politique-confidentialite" style={{ textDecoration: "none", color: "#3C5A76" }}>Politique de confidentialité</a></li>
+              <li><a href="/conditions-utilisation" style={{ textDecoration: "none", color: "#3C5A76" }}>Conditions d'utilisation</a></li>
             </ul>
           </Col>
         </Row>
@@ -51,6 +52,9 @@ const Footer = () => {
           <Col className="text-center mt-4">
             <p style={{ fontSize: "0.9rem", margin: 0 }}>
               © {new Date().getFullYear()} Chez Marty Studio. Tous droits réservés.
+            </p>
+            <p style={{ fontSize: "0.8rem", margin: 0 }}>
+              Ce site utilise des cookies pour améliorer votre expérience et analyser le trafic. 
             </p>
           </Col>
         </Row>

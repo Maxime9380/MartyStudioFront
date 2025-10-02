@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Button, Form, Container, Alert, Spinner } from "react-bootstrap";
+import { Button, Form, Container, Alert, Spinner, Row, Col } from "react-bootstrap";
 import { jwtDecode } from "jwt-decode";
 
 const CommentairesPage = () => {
@@ -20,7 +20,6 @@ const CommentairesPage = () => {
       const res = await axios.get("http://localhost:3000/api/commentaires");
       const data = Array.isArray(res.data) ? res.data : [];
 
-      // on attribue une couleur aléatoire à chaque commentaire au moment du fetch
       const dataAvecCouleurs = data.map((c) => ({
         ...c,
         couleur: couleursBulle[Math.floor(Math.random() * couleursBulle.length)],
@@ -81,7 +80,7 @@ const CommentairesPage = () => {
 
   return (
     <Container className="my-5">
-      <h3 className="mb-4">Commentaires des utilisateurs</h3>
+      <h3 className="mb-4 text-center">Commentaires des utilisateurs</h3>
 
       {error && <Alert variant="danger">{error}</Alert>}
 
@@ -95,7 +94,12 @@ const CommentairesPage = () => {
             onChange={(e) => setContenu(e.target.value)}
             required
           />
-          <Button type="submit" disabled={loading} className="mt-2">
+          <Button
+            type="submit"
+            disabled={loading}
+            className="mt-2 w-100"
+            style={{ backgroundColor: "#3c5a76", borderColor: "#3c5a76" }}
+          >
             {loading ? (
               <>
                 <Spinner as="span" animation="border" size="sm" /> Envoi...
@@ -106,76 +110,59 @@ const CommentairesPage = () => {
           </Button>
         </Form>
       ) : (
-        <p>Connectez-vous pour publier un commentaire.</p>
+        <p className="text-center">Connectez-vous pour publier un commentaire.</p>
       )}
 
-      {/* Défilement horizontal */}
-      <div
-        style={{
-          display: "flex",
-          overflowX: "auto",
-          gap: "1rem",
-          padding: "1rem 0",
-          scrollBehavior: "smooth",
-        }}
-      >
-        {commentaires.length > 0 ? (
-          commentaires.map((c) => (
-            <div
-              key={c.idCommentaire}
-              style={{
-                flex: "0 0 auto",
-                backgroundColor: c.couleur,
-                color: "#000",
-                padding: "1rem",
-                borderRadius: "15px",
-                minWidth: "250px",
-                maxWidth: "300px",
-                boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-                transition: "transform 0.2s, box-shadow 0.2s",
-              }}
-              className="bulle-card"
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-3px)";
-                e.currentTarget.style.boxShadow =
-                  "0 8px 15px rgba(0,0,0,0.15)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow =
-                  "0 4px 10px rgba(0,0,0,0.1)";
-              }}
-            >
+      {/* Affichage responsive avec Bootstrap Grid */}
+      {commentaires.length > 0 ? (
+        <Row xs={1} sm={2} md={3} lg={4} className="g-3">
+          {commentaires.map((c) => (
+            <Col key={c.idCommentaire}>
               <div
                 style={{
-                  fontWeight: "600",
-                  fontSize: "0.9rem",
-                  marginBottom: "0.3rem",
+                  backgroundColor: c.couleur,
+                  color: "#000",
+                  padding: "1rem",
+                  borderRadius: "15px",
+                  minHeight: "120px",
+                  boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+                  wordBreak: "break-word",
+                  transition: "transform 0.2s, box-shadow 0.2s",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-3px)";
+                  e.currentTarget.style.boxShadow = "0 8px 15px rgba(0,0,0,0.15)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "0 4px 10px rgba(0,0,0,0.1)";
                 }}
               >
-                {c.nom} {c.prenom}
-              </div>
-              <div style={{ marginBottom: "0.3rem" }}>{c.contenu}</div>
-              <div style={{ fontSize: "0.7rem", opacity: 0.7 }}>
-                {new Date(c.dateCommentaire).toLocaleDateString()}
-              </div>
+                <div style={{ fontWeight: "600", fontSize: "0.9rem", marginBottom: "0.3rem" }}>
+                  {c.nom} {c.prenom}
+                </div>
+                <div style={{ marginBottom: "0.3rem" }}>{c.contenu}</div>
+                <div style={{ fontSize: "0.7rem", opacity: 0.7 }}>
+                  {new Date(c.dateCommentaire).toLocaleDateString()}
+                </div>
 
-              {user?.role === "admin" && (
-                <Button
-                  variant="danger"
-                  size="sm"
-                  style={{ marginTop: "0.5rem" }}
-                  onClick={() => handleDelete(c.idCommentaire)}
-                >
-                  Supprimer
-                </Button>
-              )}
-            </div>
-          ))
-        ) : (
-          <p className="text-center">Aucun commentaire pour le moment.</p>
-        )}
-      </div>
+                {user?.role === "admin" && (
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    className="mt-2 w-100"
+                    onClick={() => handleDelete(c.idCommentaire)}
+                  >
+                    Supprimer
+                  </Button>
+                )}
+              </div>
+            </Col>
+          ))}
+        </Row>
+      ) : (
+        <p className="text-center">Aucun commentaire pour le moment.</p>
+      )}
     </Container>
   );
 };

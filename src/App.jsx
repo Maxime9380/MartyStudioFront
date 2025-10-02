@@ -16,6 +16,10 @@ import PasswordReset from './pages/PasswordReset';
 import PhotoboothPage from './pages/PhotoboothPage';
 import AdminPage from './pages/AdminPage';
 import CommentairePage from './pages/CommentairePage';
+import MentionsLegales from './pages/MentionLegal';
+import PolitiqueConfidentialite from './pages/PolitiqueDeConfidentialite';
+import ConditionsUtilisation from './pages/ConditionDUtilisation';
+import CookieConsent from './components/CookieConsent';
 
 
 function App() {
@@ -38,9 +42,13 @@ function App() {
         <Route path="/passwordOublie" element={<PasswordOublie/>}/>
         <Route path="/passwordReset/:resetToken" element={<PasswordReset/>}/>
         <Route path="/adminpage" element={<AdminPage/>}/>
+        <Route path="/mentions-legales" element={<MentionsLegales />} />
+        <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
+        <Route path="/conditions-utilisation" element={<ConditionsUtilisation />} />
       </Routes>
       
       <Footer />
+      <CookieConsent />
     </Router>
   );
 }

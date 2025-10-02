@@ -10,3 +10,4 @@ export const formatDateLocal = (date) => {
   d.setMinutes(d.getMinutes() - offset);
   return d.toISOString().split('T')[0]; // YYYY-MM-DD
 };
+

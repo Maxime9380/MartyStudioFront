@@ -37,9 +37,7 @@ const UserTable = ({ users, locations, onEdit, onDelete, search, setSearch }) =>
                 <td>{user.role}</td>
                 <td>{locationCount || "Aucune"}</td>
                 <td>
-                  <button className="btn btn-sm btn-warning me-2" onClick={() => onEdit(user)}>
-                    <PencilFill /> Modifier
-                  </button>
+                
                   <button className="btn btn-sm btn-danger" onClick={() => onDelete(user.idUser)}>
                     <TrashFill /> Supprimer
                   </button>

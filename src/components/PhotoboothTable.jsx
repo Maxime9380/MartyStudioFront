@@ -22,7 +22,7 @@ const PhotoboothTable = ({ photobooths, onEdit, onDelete, onAdd }) => (
           <tr key={pb.idPhotobooth}>
             <td>{pb.nomPhotobooth}</td>
             <td>{pb.statut}</td>
-            <td>{pb.prix}</td>
+            <td>1 euros / tirage</td>
             <td>
               <button className="btn btn-sm btn-warning me-2" onClick={() => onEdit(pb)}>
                 <PencilFill /> Modifier

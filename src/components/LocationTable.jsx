@@ -27,7 +27,7 @@ const LocationTable = ({ locations, users, photobooths, onUpdate, onDelete }) =>
             <th>Photobooth</th>
             <th>Lieu</th>
             {/* <th>Statut</th> */}
-            <th>Prix (€)</th>
+            {/* <th>Prix (€)</th> */}
             <th>Date début</th>
             <th>Date fin</th>
             <th>Actions</th>
@@ -106,23 +106,12 @@ const LocationTable = ({ locations, users, photobooths, onUpdate, onDelete }) =>
                   )}
                 </td> */}
 
-                <td>
-                  {isEditing ? (
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={formData.prix || loc.prixTotal}
-                      onChange={(e) => handleChange("prix", e.target.value)}
-                    />
-                  ) : (
-                    `${loc.prixTotal} €`
-                  )}
-                </td>
+               
 
                 <td>
                   {isEditing ? (
                     <DatePicker
-                    selected={formData.dateDebut ? moment(formData.dateDebut).format('YYYY-MM-DD') : moment(formData.dateDebut).format('YYYY-MM-DD') }
+                    selected={formData.dateDebut ? moment(formData.dateDebut).format('YYYY-MM-DD').toDate() : moment(formData.dateDebut).format('YYYY-MM-DD').toDate() }
                       onChange={(date) => handleChange("dateDebut", formatDate(date))}
                       dateFormat="yyyy-MM-dd"
                       className="form-control"
@@ -135,7 +124,7 @@ const LocationTable = ({ locations, users, photobooths, onUpdate, onDelete }) =>
                 <td>
                   {isEditing ? (
                     <DatePicker
-                      selected={formData.dateFin ? moment(formData.dateFin).format('YYYY-MM-DD'): moment(formData.dateFin).add(1, 'day').format('YYYY-MM-DD') }
+                      selected={formData.dateFin ? moment(formData.dateFin).format('YYYY-MM-DD').toDate() : moment(formData.dateFin).add(1, 'day').format('YYYY-MM-DD').toDate() }
                       onChange={(date) => handleChange("dateFin", formatDate(date))}
                       dateFormat="yyyy-MM-dd"
                       className="form-control"
@@ -185,18 +174,7 @@ const LocationTable = ({ locations, users, photobooths, onUpdate, onDelete }) =>
                     </>
                   ) : (
                     <>
-                      <button
-                        className="btn btn-sm btn-warning me-2"
-                        onClick={() => {
-                          setEditingLoc(locKey);
-                          setFormData({...loc,
-                            dateDebut: moment(loc.dateDebut).add(1,'day').format("YYYY-MM-DD"),
-                            dateFin: moment(loc.dateFin).add(1,'day').format("YYYY-MM-DD"),
-                          }); // pré-remplir avec les valeurs actuelles
-                        }}
-                      >
-                        <PencilFill /> Modifier
-                      </button>
+                     
                      
   <button
     className="btn btn-sm btn-danger"

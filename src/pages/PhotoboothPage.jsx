@@ -6,6 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import moment from "moment";
 
+
 const BookingForm = () => {
   const [lieu, setLieu] = useState("");
   const [dateRange, setDateRange] = useState([new Date(), new Date()]);
@@ -70,11 +71,6 @@ const BookingForm = () => {
       const pb = photobooths.find(pb => pb.idPhotobooth === photoboothId);
       if (!pb) throw new Error("Photobooth introuvable");
 
-      const dateDebutMoment = moment(dateDebut);
-      const dateFinMoment = moment(dateFin);
-      const nbJours = dateFinMoment.diff(dateDebutMoment, 'days') + 1;
-      const prixTotal = pb.prix * nbJours;
-
       const res = await fetch("http://localhost:3000/api/createlocation", {
         method: "POST",
         headers: {
@@ -112,43 +108,9 @@ const BookingForm = () => {
 
   if (!isLoggedIn) {
     return (
-      <div
-        style={{
-          minHeight: "100vh",
-          width: "100%",
-          backgroundImage: "url('/public/caravane.jpeg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          position: "relative",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0,0,0,0.5)",
-          }}
-        ></div>
-        <div
-          style={{
-            position: "relative",
-            zIndex: 1,
-            backgroundColor: "rgba(255,255,255,0.9)",
-            padding: "20px",
-            borderRadius: "10px",
-            minWidth: "300px",
-            maxWidth: "500px",
-            boxShadow: "0 4px 15px rgba(0,0,0,0.3)",
-            textAlign: "center",
-          }}
-        >
+      <div className="booking-container">
+        <div className="overlay"></div>
+        <div className="booking-card">
           <h2>Réserver un Photobooth</h2>
           <p>⚠️ Vous devez être connecté pour réserver un photobooth.</p>
         </div>
@@ -158,53 +120,17 @@ const BookingForm = () => {
   }
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        width: "100%",
-        backgroundImage: "url('/public/caravane.jpeg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        position: "relative",
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "rgba(0,0,0,0.5)",
-        }}
-      ></div>
+    <div className="booking-container">
+      <div className="overlay"></div>
 
-      <div
-        style={{
-          position: "relative",
-          zIndex: 1,
-          backgroundColor: "rgba(255,255,255,0.95)",
-          padding: "20px",
-          borderRadius: "10px",
-          minWidth: "300px",
-          maxWidth: "500px",
-          boxShadow: "0 4px 15px rgba(0,0,0,0.3)",
-        }}
-      >
-        <h2 style={{ textAlign: "center" }}>Réserver un Photobooth</h2>
-        <form
-          onSubmit={handleSubmit}
-          style={{ display: "flex", flexDirection: "column", gap: "10px" }}
-        >
+      <div className="booking-card">
+        <h2 className="title">Réserver un Photobooth</h2>
+        <form onSubmit={handleSubmit} className="form">
           {userInfo && (
             <>
-              <input type="text" value={userInfo.nom || ""} readOnly style={inputStyle} />
-              <input type="text" value={userInfo.prenom || ""} readOnly style={inputStyle} />
-              <input type="email" value={userInfo.email || ""} readOnly style={inputStyle} />
+              <input type="text" value={userInfo.nom || ""} readOnly className="input" />
+              <input type="text" value={userInfo.prenom || ""} readOnly className="input" />
+              <input type="email" value={userInfo.email || ""} readOnly className="input" />
             </>
           )}
 
@@ -214,26 +140,26 @@ const BookingForm = () => {
             value={lieu}
             onChange={(e) => setLieu(e.target.value)}
             required
-            style={inputStyle}
+            className="input"
           />
 
-          <label style={{ color: "black" }}>Choisir les dates :</label>
-         <div style={{ display: "flex", justifyContent: "center", marginBottom: "10px" }}>
-  <DatePicker
-    selected={dateRange[0]}
-    onChange={(dates) => setDateRange(dates)}
-    startDate={dateRange[0]}
-    endDate={dateRange[1]}
-    selectsRange
-    inline
-  />
-</div>
+          <label className="label">Choisir les dates :</label>
+          <div className="datepicker-container">
+            <DatePicker
+              selected={dateRange[0]}
+              onChange={(dates) => setDateRange(dates)}
+              startDate={dateRange[0]}
+              endDate={dateRange[1]}
+              selectsRange
+              inline
+            />
+          </div>
 
           <select
             value={photoboothId}
             onChange={(e) => setPhotoboothId(parseInt(e.target.value))}
             required
-            style={inputStyle}
+            className="input"
           >
             {photobooths.map((pb) => (
               <option key={pb.idPhotobooth} value={pb.idPhotobooth}>
@@ -242,7 +168,7 @@ const BookingForm = () => {
             ))}
           </select>
 
-          <button type="submit" style={buttonStyle}>
+          <button type="submit" className="button">
             Réserver
           </button>
         </form>
@@ -250,20 +176,6 @@ const BookingForm = () => {
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
-};
-
-const inputStyle = {
-  backgroundColor: "white",
-  color: "black",
-  border: "1px solid black",
-  padding: "8px",
-  borderRadius: "6px",
-};
-
-const buttonStyle = {
-  padding: "10px",
-  borderRadius: "6px",
-  cursor: "pointer",
 };
 
 export default BookingForm;
