@@ -6,7 +6,7 @@ import { checkToken } from "../services/AuthService";
 const NavigationBar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(checkToken());
   const [user, setUser] = useState(null);
-  const [expanded, setExpanded] = useState(false); // <--- contrôle du menu burger
+  const [expanded, setExpanded] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,94 +17,99 @@ const NavigationBar = () => {
 
   const handleNavClick = (path) => {
     navigate(path);
-    setExpanded(false); // <--- ferme le menu après le clic
+    setExpanded(false);
   };
+
+  const linkStyle = { margin: "0 10px", color: "#3c5a76" };
 
   return (
     <Navbar
       expand="lg"
       sticky="top"
-      expanded={expanded} // <--- état contrôlé
-      onToggle={(val) => setExpanded(val)}
+      expanded={expanded}
+      onToggle={setExpanded}
       style={{
         backgroundColor: "#a3c8a3",
         boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-        padding: "10px 0",
+        padding: "15px 0",
       }}
     >
-      <Container
-        style={{
-          maxWidth: "1200px",
-          width: "100%",
-          margin: "0 auto",
-          alignItems: "center",
-          display: "flex",
-          justifyContent: "space-between",
-        }}
-      >
+      <Container style={{ maxWidth: "1200px", width: "100%" }}>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
-        <Navbar.Brand onClick={() => handleNavClick("/")} style={{ cursor: "pointer" }}>
-          <img
-            src="/public/logo.png"
-            alt="Logo"
-            style={{
-              height: "80px",
-              width: "80px",
-              borderRadius: "50%",
-              objectFit: "contain",
-            }}
-          />
-        </Navbar.Brand>
-
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ms-auto" style={{ display: "flex", alignItems: "center" }}>
-            <Nav.Link onClick={() => handleNavClick("/apropos")} style={{ margin: "0 10px", color: "#3c5a76" }}>À propos</Nav.Link>
-            <Nav.Link onClick={() => handleNavClick("/mariages")} style={{ margin: "0 10px", color: "#3c5a76" }}>Mariages</Nav.Link>
-            <Nav.Link onClick={() => handleNavClick("/seances")} style={{ margin: "0 10px", color: "#3c5a76" }}>Séances Photo</Nav.Link>
-            <Nav.Link onClick={() => handleNavClick("/galeries")} style={{ margin: "0 10px", color: "#3c5a76" }}>Galeries Public</Nav.Link>
-            {isLoggedIn && (
-              <Nav.Link onClick={() => handleNavClick("/galeriePrivee")} style={{ margin: "0 10px", color: "#3c5a76" }}>Galeries Privées</Nav.Link>
-            )}
-            <Nav.Link onClick={() => handleNavClick("/photobooth")} style={{ margin: "0 10px", color: "#3c5a76" }}>Photobooth</Nav.Link>
-            <Nav.Link onClick={() => handleNavClick("/contact")} style={{ margin: "0 10px", color: "#3c5a76" }}>Contact</Nav.Link>
-            <Nav.Link onClick={() => handleNavClick("/temoignages")} style={{ margin: "0 10px", color: "#3c5a76" }}>Témoignages</Nav.Link>
-            {isLoggedIn && user?.role === "admin" && (
-              <Nav.Link onClick={() => handleNavClick("/adminPage")} style={{ margin: "0 10px", color: "#3c5a76" }}>Réserver ADMIN</Nav.Link>
-            )}
+          <div className="d-flex w-100 justify-content-between align-items-center">
+            
+            {/* Liens gauche */}
+            <Nav className="d-flex align-items-center">
+              <Nav.Link onClick={() => handleNavClick("/apropos")} style={linkStyle}>À propos</Nav.Link>
+              <Nav.Link onClick={() => handleNavClick("/mariages")} style={linkStyle}>Mariages</Nav.Link>
+              <Nav.Link onClick={() => handleNavClick("/seances")} style={linkStyle}>Séances Photo</Nav.Link>
+              <Nav.Link onClick={() => handleNavClick("/galeries")} style={linkStyle}>Galeries Public</Nav.Link>
+              {isLoggedIn && (
+                <Nav.Link onClick={() => handleNavClick("/galeriePrivee")} style={linkStyle}>Galeries Privées</Nav.Link>
+              )}
+            </Nav>
 
-            {isLoggedIn ? (
-              <Nav.Link
-                onClick={() => {
-                  localStorage.removeItem("token");
-                  setIsLoggedIn(false);
-                  handleNavClick("/connexion");
-                }}
+            {/* Logo centré (visible uniquement en desktop) */}
+            <Navbar.Brand
+              onClick={() => handleNavClick("/")}
+              className="mx-3 d-none d-lg-block"
+              style={{ cursor: "pointer" }}
+            >
+              <img
+                src="/public/logo.png"
+                alt="Logo"
                 style={{
-                  margin: "0 10px",
-                  color: "#fff",
-                  backgroundColor: "#d16d6d",
-                  padding: "5px 15px",
-                  borderRadius: "5px",
+                  height: "100px",
+                  width: "100px",
+                  borderRadius: "50%",
+                  objectFit: "contain",
                 }}
-              >
-                Déconnexion
-              </Nav.Link>
-            ) : (
-              <Nav.Link
-                onClick={() => handleNavClick("/connexion")}
-                style={{
-                  margin: "0 10px",
-                  color: "#fff",
-                  backgroundColor: "#3c5a76",
-                  padding: "5px 15px",
-                  borderRadius: "5px",
-                }}
-              >
-                Connexion
-              </Nav.Link>
-            )}
-          </Nav>
+              />
+            </Navbar.Brand>
+
+            {/* Liens droite */}
+            <Nav className="d-flex align-items-center">
+              <Nav.Link onClick={() => handleNavClick("/photobooth")} style={linkStyle}>Photobooth</Nav.Link>
+              <Nav.Link onClick={() => handleNavClick("/contact")} style={linkStyle}>Contact</Nav.Link>
+              <Nav.Link onClick={() => handleNavClick("/temoignages")} style={linkStyle}>Témoignages</Nav.Link>
+              {isLoggedIn && user?.role === "admin" && (
+                <Nav.Link onClick={() => handleNavClick("/adminPage")} style={linkStyle}>Réserver ADMIN</Nav.Link>
+              )}
+              {isLoggedIn ? (
+                <Nav.Link
+                  onClick={() => {
+                    localStorage.removeItem("token");
+                    setIsLoggedIn(false);
+                    handleNavClick("/connexion");
+                  }}
+                  style={{
+                    margin: "0 10px",
+                    color: "#fff",
+                    backgroundColor: "#d16d6d",
+                    padding: "5px 15px",
+                    borderRadius: "5px",
+                  }}
+                >
+                  Déconnexion
+                </Nav.Link>
+              ) : (
+                <Nav.Link
+                  onClick={() => handleNavClick("/connexion")}
+                  style={{
+                    margin: "0 10px",
+                    color: "#fff",
+                    backgroundColor: "#3c5a76",
+                    padding: "5px 15px",
+                    borderRadius: "5px",
+                  }}
+                >
+                  Connexion
+                </Nav.Link>
+              )}
+            </Nav>
+          </div>
         </Navbar.Collapse>
       </Container>
     </Navbar>

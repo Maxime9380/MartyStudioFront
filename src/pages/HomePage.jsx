@@ -38,33 +38,43 @@ export default function HomePage() {
         </h1>
       </div>
 
-      {/* Présentation */}
-      <div className="container py-5">
-        <div className="row align-items-center">
-          <div className="col-md-6 mb-4 mb-md-0">
-            <h2>Présentation</h2>
-            <p style={{ lineHeight: "1.6" }}>
-              Bienvenue chez Marty Studio, votre destination de choix pour des
-              photographies exceptionnelles. Je suis Lucie Marty, une
-              photographe passionnée avec plus de 10 ans d'expérience dans le
-              domaine. Mon objectif est de capturer vos moments les plus précieux
-              avec authenticité et créativité. Que ce soit pour des mariages,
-              des portraits, des événements spéciaux ou des séances en studio, je
-              m'engage à fournir un service personnalisé et des images de haute
-              qualité qui racontent votre histoire unique.
-            </p>
-          </div>
-
-          <div className="col-md-6 d-flex justify-content-md-end justify-content-center">
-            <img
-              src="/lucie.jpeg"
-              alt="Portrait de Lucie Marty, photographe professionnelle"
-              className="img-fluid rounded shadow"
-              style={{ maxWidth: "300px", width: "80%" }}
-            />
-          </div>
-        </div>
+    {/* Présentation */}
+<div className="container py-5">
+  <div
+    className="p-4 rounded shadow"
+    style={{
+      border: "2px solid #000", // Bordure noire
+      borderRadius: "15px",     // Coins arrondis
+      backgroundColor: "#fff",  // Fond blanc (si tu veux que ça ressorte)
+    }}
+  >
+    <div className="row align-items-center">
+      <div className="col-md-6 mb-4 mb-md-0">
+        <h2>Présentation</h2>
+        <p style={{ lineHeight: "1.6" }}>
+          Bienvenue chez Marty Studio, votre destination de choix pour des
+          photographies exceptionnelles. Je suis Lucie Marty, une photographe
+          passionnée avec plus de 10 ans d'expérience dans le domaine. Mon
+          objectif est de capturer vos moments les plus précieux avec
+          authenticité et créativité. Que ce soit pour des mariages, des
+          portraits, des événements spéciaux ou des séances en studio, je
+          m'engage à fournir un service personnalisé et des images de haute
+          qualité qui racontent votre histoire unique.
+        </p>
       </div>
+
+      <div className="col-md-6 d-flex justify-content-md-end justify-content-center">
+        <img
+          src="/lucie.jpeg"
+          alt="Portrait de Lucie Marty, photographe professionnelle"
+          className="img-fluid rounded shadow"
+          style={{ maxWidth: "300px", width: "80%" }}
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
 
       {/* Mes Prestations */}
       <div

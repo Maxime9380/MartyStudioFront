@@ -95,12 +95,14 @@ export const SeancePage = () => {
             <div className="card-body flex-grow-1">
               <h5 className="card-title">Événements</h5>
               <p className="card-text">
-                Des séances photo d'événements pour capturer l'ambiance et les moments forts de vos occasions spéciales.
+               "Immortalisez vos plus beaux événements : Noël, Halloween, Pâques, Carnaval ou EVJF/EVG. Des photos pleines d’émotions pour des souvenirs qui durent."
                 Prix: 400€
               </p>
             </div>
             <div className="card-footer bg-transparent border-0">
-              <Button style={buttonStyle} className="w-100" onClick={() => handleShow("Événements")}>
+              <Button style={{backgroundColor: "#FF7F50", // corail
+  borderColor: "#FF7F50",
+  color: "white"}} className="w-100" onClick={() => handleShow("Événements")}>
                 Prenez Rendez-Vous
               </Button>
             </div>
