@@ -12,31 +12,33 @@ export default function HomePage() {
   return (
     <div>
       {/* Hero Section */}
-      <div
-        className="position-relative"
-        style={{ width: "100%", height: "auto", overflow: "hidden" }}
-      >
-        <img
-          src="/public/mariesmontagne.jpg"
-          alt="Mariés sur la montagne lors d'un mariage en plein air"
-          style={{ height: "auto", maxWidth: "100%", objectFit: "cover" }}
-        />
-        <h1
-          style={{
-            position: "absolute",
-            top: "20%",
-            left: "50%",
-            transform: "translateX(-50%)",
-            color: "#000000",
-            fontSize: "5rem",
-            textShadow: "2px 2px 4px rgba(0,0,0,0.7)",
-            fontFamily: "inspiration,cursive",
-            padding: "10px",
-          }}
-        >
-          Chez Marty Studio
-        </h1>
-      </div>
+  <div
+  className="position-relative d-flex justify-content-center align-items-start"
+  style={{ width: "100%", height: "auto", overflow: "hidden" }}
+>
+  <img
+    src="/public/mariésForet.jpg"
+    alt="Mariés dans la forêt lors d'un mariage en plein air"
+    style={{ width: "100%", height: "auto", objectFit: "cover" }}
+  />
+  <h1
+    style={{
+      color: "#f5ededff",
+      fontSize: "clamp(2rem, 8vw, 5rem)",
+      textShadow: "2px 2px 4px rgba(0,0,0,0.7)",
+      fontFamily: "inspiration,cursive",
+      padding: "10px",
+      position: "absolute",
+      top: "10%", // garde 10% de l'image, mais le texte s'adapte grâce à clamp()
+      left: "50%",
+      transform: "translateX(-50%)",
+      textAlign: "center",
+    }}
+  >
+    Chez Marty Studio
+  </h1>
+</div>
+
 
     {/* Présentation */}
 <div className="container py-5">
@@ -129,8 +131,8 @@ export default function HomePage() {
             >
               <Card.Img
                 variant="top"
-                src="/public/couple.jpeg"
-                alt="Séance photo de couple en extérieur"
+                src="/public/groupe2cv.jpg"
+                alt="Séance photo d'amis en extérieur"
                 style={{
                   borderTopLeftRadius: "16px",
                   borderTopRightRadius: "16px",
@@ -197,7 +199,7 @@ export default function HomePage() {
             >
               <Card.Img
                 variant="top"
-                src="/public/caravane.jpeg"
+                src="/public/amiscaravane.jpg"
                 alt="Photobooth avec caravane vintage pour événement"
                 style={{
                   borderTopLeftRadius: "16px",

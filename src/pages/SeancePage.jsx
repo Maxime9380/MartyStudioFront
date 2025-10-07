@@ -53,7 +53,7 @@ export const SeancePage = () => {
         {/* Portraits */}
         <div className="col">
           <div className="card h-100 d-flex flex-column">
-            <img src="/public/luciepetit.jpeg" className="card-img-top" alt="Portraits" />
+            <img src="/public/mecmer.jpg" className="card-img-top" alt="Portraits" />
             <div className="card-body flex-grow-1">
               <h5 className="card-title">Portraits</h5>
               <p className="card-text">
@@ -72,7 +72,7 @@ export const SeancePage = () => {
         {/* Familles */}
         <div className="col">
           <div className="card h-100 d-flex flex-column">
-            <img src="/public/couplepetit.jpeg" className="card-img-top" alt="Familles" />
+            <img src="/public/famillejardin.jpg" className="card-img-top" alt="Familles" />
             <div className="card-body flex-grow-1">
               <h5 className="card-title">Familles</h5>
               <p className="card-text">
@@ -91,7 +91,7 @@ export const SeancePage = () => {
         {/* Événements */}
         <div className="col">
           <div className="card h-100 d-flex flex-column">
-            <img src="/public/granderouepetit.jpeg" className="card-img-top" alt="Événements" />
+            <img src="/public/tableColoré.jpg" className="card-img-top" alt="Événements" />
             <div className="card-body flex-grow-1">
               <h5 className="card-title">Événements</h5>
               <p className="card-text">

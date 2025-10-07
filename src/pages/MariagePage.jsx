@@ -10,6 +10,9 @@ export const MariagePage = () => {
         { src: "/public/costumepetit.jpeg", alt: "Image 1", caption: "Légende 1" },
         { src: "/public/couplemainpetit.jpeg", alt: "Image 2", caption: "Légende 2" },
         { src: "/public/robemariepetit.jpeg", alt: "Image 3", caption: "Légende 3" },
+        { src: "/public/mariéJardin.jpg", alt: "Image 4", caption: "Légende 4" },
+        { src: "/public/mariéJeux.png", alt: "Image 5", caption: "Légende 5" },
+        { src: "/public/mariétémoin.png", alt: "Image 6", caption: "Légende 6" },
     ];
 
     const buttonStyle = {
@@ -30,26 +33,25 @@ export const MariagePage = () => {
                 Bienvenue sur la page dédiée aux mariages. Découvrez des instants uniques, capturés avec émotion et élégance.
             </p>
 
-            {/* Carousel */}
-            <div className="max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-2xl">
-                <Carousel fade interval={5000} controls indicators>
-                    {images.map((item, i) => (
-                        <Carousel.Item key={i}>
-                            <img
-                                className="d-block w-100"
-                                src={item.src}
-                                alt={item.alt}
-                                style={{
-                                    height: "550px",
-                                    objectFit: "cover",
-                                    filter: "brightness(90%)",
-                                    width: "100%"
-                                }}
-                            />
-                        </Carousel.Item>
-                    ))}
-                </Carousel>
-            </div>
+      {/* Carousel */}
+{/* Carousel */}
+<div className="max-w-3xl mx-auto rounded-3xl overflow-hidden shadow-2xl">
+  <Carousel fade interval={5000} controls indicators>
+    {images.map((item, i) => (
+      <Carousel.Item key={i}>
+        <div className="bg-black flex justify-center items-center">
+          <img
+            className="w-full max-w-full h-auto max-h-[60vh] object-contain brightness-90"
+            src={item.src}
+            alt={item.alt}
+          />
+        </div>
+      </Carousel.Item>
+    ))}
+  </Carousel>
+</div>
+
+
 
             {/* Section description */}
            <div className="max-w-2xl mx-auto text-justify space-y-8 leading-relaxed text-gray-700">
